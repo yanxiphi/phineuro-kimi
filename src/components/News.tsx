@@ -136,7 +136,7 @@ export default function News() {
                 </p>
 
                 <a
-                  href="#"
+                  href={item.url} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-burgundy font-medium hover:text-gold transition-all duration-300 group/link"
                 >
                   阅读全文
