@@ -28,7 +28,7 @@ const newsItems: NewsItem[] = [
     summary: '认知混合化：神经科学与人工智能界面上的身份重塑',
     image: './images/news-2.jpg',
     align: 'right',
-    url: 'https://www.notion.so/260319-3286d43c4bc080ce9570e86767542c63?source=copy_link'
+    url: 'https://ivory-mercury-e7d.notion.site/260319-3286d43c4bc080ce9570e86767542c63?source=copy_link'
   },
   {
     id: 3,
