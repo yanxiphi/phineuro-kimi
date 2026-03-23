@@ -16,7 +16,7 @@ const newsItems: NewsItem[] = [
     title: '神经科学前沿：新研究挑战了记忆研究50年的基本假设',
     date: '2024年12月15日',
     summary: '发表于《自然·人类行为》：你的"自传"可能不是写出来的，而是编出来的。',
-    image: '/images/news-1.jpg',
+    image: './images/news-1.jpg',
     align: 'left',
     url: 'https://www.notion.so/260202-2fb6d43c4bc0802f9ecaca8548610f34?source=copy_link',
   },
@@ -25,7 +25,7 @@ const newsItems: NewsItem[] = [
     title: '意识的哲学：神经科学能解释主观体验吗？',
     date: '2024年12月10日',
     summary: '探讨意识的"硬问题"：即使我们完全理解大脑的神经机制，能否解释为什么存在主观体验？',
-    image: '/images/news-2.jpg',
+    image: './images/news-2.jpg',
     align: 'right',
   },
   {
@@ -33,7 +33,7 @@ const newsItems: NewsItem[] = [
     title: '阿尔茨海默病新药：改变疾病进程的突破',
     date: '2024年12月5日',
     summary: 'Leqembi和Kisunla等新型抗淀粉样蛋白药物的临床数据与真实世界应用分析。',
-    image: '/images/news-3.jpg',
+    image: './images/news-3.jpg',
     align: 'left',
   },
 ];
