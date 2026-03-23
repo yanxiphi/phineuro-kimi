@@ -18,7 +18,7 @@ const newsItems: NewsItem[] = [
     summary: '发表于《自然·人类行为》：你的"自传"可能不是写出来的，而是编出来的。',
     image: '/images/news-1.jpg',
     align: 'left',
-    url: 'https://www.notion.so/260202-2fb6d43c4bc0802f9ecaca8548610f34?source=copy_link'
+    url: 'https://www.notion.so/260202-2fb6d43c4bc0802f9ecaca8548610f34?source=copy_link',
   },
   {
     id: 2,
