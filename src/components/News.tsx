@@ -15,7 +15,7 @@ const newsItems: NewsItem[] = [
   {
     id: 1,
     title: '神经科学前沿：新研究挑战了记忆研究50年的基本假设',
-    date: '2024年12月15日',
+    date: '2026年03月15日',
     summary: '发表于《自然·人类行为》：你的"自传"可能不是写出来的，而是编出来的。',
     image: './images/news-1.jpg',
     align: 'left',
@@ -23,19 +23,21 @@ const newsItems: NewsItem[] = [
   },
   {
     id: 2,
-    title: '意识的哲学：神经科学能解释主观体验吗？',
-    date: '2024年12月10日',
-    summary: '探讨意识的"硬问题"：即使我们完全理解大脑的神经机制，能否解释为什么存在主观体验？',
+    title: '生物与人工系统的神经认知融合？',
+    date: '2026年12月10日',
+    summary: '认知混合化：神经科学与人工智能界面上的身份重塑',
     image: './images/news-2.jpg',
     align: 'right',
+    url: 'https://www.notion.so/260319-3286d43c4bc080ce9570e86767542c63?source=copy_link'
   },
   {
     id: 3,
-    title: '阿尔茨海默病新药：改变疾病进程的突破',
-    date: '2024年12月5日',
-    summary: 'Leqembi和Kisunla等新型抗淀粉样蛋白药物的临床数据与真实世界应用分析。',
+    title: '复制大脑：从模拟到复制',
+    date: '2026年03月21日',
+    summary: '采用生物启发机制、连接人工神经元和突触的硬件——这种区分变得日益重要。',
     image: './images/news-3.jpg',
     align: 'left',
+    url: 'https://www.notion.so/260319Duplicating-the-Brain-From-Simulation-to-Duplication-3286d43c4bc080e1a6eeffdeff5a229b?source=copy_link'
   },
 ];
 
