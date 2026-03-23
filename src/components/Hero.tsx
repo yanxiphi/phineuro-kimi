@@ -16,16 +16,17 @@ export default function Hero() {
       ref={heroRef}
       className="relative min-h-screen flex items-center overflow-hidden"
     >
-      {/* Background Image */}
+      {/* Background Image - 使用相对路径 */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/images/hero-bg.jpg"
+          src="./images/hero-bg.jpg"
           alt="Neural Network Background"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-burgundy/90 via-burgundy/70 to-transparent" />
       </div>
 
+      {/* 其他内容保持不变... */}
       {/* Floating Decorative Elements */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-20 w-64 h-64 bg-gold/10 rounded-full blur-3xl animate-float" />
@@ -132,7 +133,7 @@ export default function Hero() {
               }}
             >
               <img
-                src="/images/topic-bci.jpg"
+                src="./images/topic-bci.jpg"
                 alt="Brain-Computer Interface"
                 className="w-full h-auto"
               />
@@ -150,7 +151,7 @@ export default function Hero() {
               }}
             >
               <img
-                src="/images/topic-cognition.jpg"
+                src="./images/topic-cognition.jpg"
                 alt="Cognitive Science"
                 className="w-full h-auto"
               />
@@ -168,7 +169,7 @@ export default function Hero() {
               }}
             >
               <img
-                src="/images/topic-ai-ethics.jpg"
+                src="./images/topic-ai-ethics.jpg"
                 alt="AI Ethics"
                 className="w-full h-auto"
               />
