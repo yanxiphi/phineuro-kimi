@@ -13,11 +13,12 @@ interface NewsItem {
 const newsItems: NewsItem[] = [
   {
     id: 1,
-    title: '神经科学前沿：2024年突破性研究回顾',
+    title: '神经科学前沿：新研究挑战了记忆研究50年的基本假设',
     date: '2024年12月15日',
-    summary: '从阿尔茨海默病新药到脑机接口人体试验，回顾2024年神经科学领域最具影响力的研究成果。',
+    summary: '发表于《自然·人类行为》：你的"自传"可能不是写出来的，而是编出来的。',
     image: '/images/news-1.jpg',
     align: 'left',
+    url: 'https://www.notion.so/260202-2fb6d43c4bc0802f9ecaca8548610f34?source=copy_link'
   },
   {
     id: 2,
