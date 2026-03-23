@@ -8,6 +8,7 @@ interface NewsItem {
   summary: string;
   image: string;
   align: 'left' | 'right';
+  url: string;
 }
 
 const newsItems: NewsItem[] = [
