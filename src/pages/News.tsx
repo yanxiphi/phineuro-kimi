@@ -104,6 +104,16 @@ const papersData: NewsItem[] = [
     date: '2025-03-10',
     tags: ['AI解码', '迁移学习'],
   },
+  {
+    id: 6,
+    title: '基于脑机接口的康复训练系统',
+    summary: '上海大学团队基于MATLAB和VC++混合编程开发了BCI康复训练系统，用于中风患者康复。通过解码EEG信号实时识别运动意图，触发康复外设从视觉、听觉和触觉给予反馈，实现患者主动康复。',
+    source: 'Journal of System Simulation',
+    date: '2019-02-15',
+    tags: ['非侵入式BCI', '康复训练'],
+    url: 'https://dc-china-simulation.researchcommons.org/cgi/viewcontent.cgi?article=2214&context=journal',
+    isHot: true,
+  },
 ];
 
 const newsData: NewsItem[] = [

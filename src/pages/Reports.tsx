@@ -320,6 +320,16 @@ const bciReports: BCIReport[] = [
     source: '蛋壳研究院',
     category: '行业研究',
   },
+  {
+    id: 38,
+    title: '脑机接口行业图谱：资本市场与公司金融研究团队',
+    date: '2023-07-07',
+    year: 2023,
+    source: '清华五道口',
+    category: '学术研究',
+    downloadUrl: 'https://www.pbcsf.tsinghua.edu.cn/__local/8/05/61/E7A0684F36DC2A17B669A55228E_204EAB63_281BDB.pdf',
+    isNew: true,
+  },
 ];
 
 export default function Reports() {
