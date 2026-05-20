@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import {
   Brain, Newspaper, Database, FileText, ArrowRight,
-  ChevronRight, Clock, BookOpen, TrendingUp, Mail, Check
+  ChevronRight, Clock, BookOpen, TrendingUp, Check
 } from 'lucide-react';
 import NeuronCanvas from '../components/NeuronCanvas';
 
@@ -76,7 +76,6 @@ export default function Home() {
     <div className="min-h-screen bg-cream">
       {/* ===== Hero Section ===== */}
       <section
-        ref={heroRef}
         className="relative w-full min-h-[600px] h-screen flex items-center justify-center overflow-hidden"
       >
         <NeuronCanvas />
@@ -138,7 +137,7 @@ export default function Home() {
       </section>
 
       {/* ===== Main Content Area ===== */}
-      <div ref={contentRef}>
+      <div>
         {/* Dark-to-light transition gradient */}
         <div className="h-[60px] w-full" style={{
           background: 'linear-gradient(to bottom, #1A1A2E 0%, #FDFCF8 100%)'
