@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - yanxiphi-patch-3-modules-adding
   workflow_dispatch:
 
 permissions:
