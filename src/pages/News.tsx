@@ -238,7 +238,11 @@ export default function NewsPage() {
           {currentTab.data.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl border border-border-light p-5 hover:shadow-card-hover transition-all duration-300 group"
+              onClick={() => {
+                const targetUrl = item.url || `https://www.baidu.com/s?wd=${encodeURIComponent(item.title)}`;
+                window.open(targetUrl, '_blank', 'noopener,noreferrer');
+              }}
+              className="bg-white rounded-xl border border-border-light p-5 hover:shadow-card-hover transition-all duration-300 group cursor-pointer"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -275,15 +279,10 @@ export default function NewsPage() {
                     </span>
                   </div>
                 </div>
-                {item.url && (
-                  <button
-                    onClick={() => window.open(item.url, '_blank')}
-                    className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm hover:bg-burgundy hover:text-white transition-all"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span className="hidden sm:inline">查看</span>
-                  </button>
-                )}
+                <div className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm group-hover:bg-burgundy group-hover:text-white transition-all">
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="hidden sm:inline">查看来源</span>
+                </div>
               </div>
             </div>
           ))}
