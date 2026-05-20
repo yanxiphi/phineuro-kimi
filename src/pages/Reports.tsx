@@ -12,7 +12,8 @@ interface BCIReport {
   year: number;
   source: string;
   category: string;
-  url?: string;
+  downloadUrl?: string;
+  sourceUrl?: string;
   isNew?: boolean;
 }
 
@@ -24,6 +25,7 @@ const bciReports: BCIReport[] = [
     year: 2025,
     source: '前瞻研究院',
     category: '行业蓝皮书',
+    downloadUrl: 'https://www.sgpjbg.com/bgdown/608134.html?id=608134',
   },
   {
     id: 2,
@@ -88,6 +90,7 @@ const bciReports: BCIReport[] = [
     year: 2025,
     source: '知识产权研究',
     category: '知识产权',
+    downloadUrl: 'https://bydrug.pharmcube.com/news/detail/0bf478389016a8183e99d502e4fcd630',
   },
   {
     id: 10,
@@ -96,6 +99,7 @@ const bciReports: BCIReport[] = [
     year: 2025,
     source: '中国信通院',
     category: '官方报告',
+    sourceUrl: 'http://mp.weixin.qq.com/s?__biz=Mzk0OTUzMjA2MQ==&mid=2247584571&idx=3&sn=385e8d81de525763d9afc89c90bcb1c3',
   },
   {
     id: 11,
@@ -233,6 +237,7 @@ const bciReports: BCIReport[] = [
     year: 2023,
     source: '中国信通院',
     category: '官方报告',
+    downloadUrl: 'https://www.sgpjbg.com/bgdown/149882.html',
   },
   {
     id: 28,
@@ -257,6 +262,7 @@ const bciReports: BCIReport[] = [
     year: 2023,
     source: '中国信通院',
     category: '官方报告',
+    downloadUrl: 'https://m.sgpjbg.com/bgdown/145125.html',
   },
   {
     id: 31,
@@ -533,6 +539,14 @@ export default function Reports() {
                         </div>
                       </div>
                       <button
+                        onClick={() => {
+                          const url = report.downloadUrl || report.sourceUrl;
+                          if (url) {
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                          } else {
+                            alert(`《${report.title}》暂无直接下载链接。\n\n来源：${report.source}\n建议通过发布机构官网或PhiNeuro公众号获取。`);
+                          }
+                        }}
                         className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm font-medium hover:bg-burgundy hover:text-white transition-all duration-200 opacity-0 group-hover:opacity-100"
                         title="下载报告"
                       >
