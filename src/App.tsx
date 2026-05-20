@@ -2,9 +2,10 @@ import { HashRouter, Routes, Route } from 'react-router';
 import Navbar from './components/Navbar';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
-import Articles from './pages/Articles';
+import News from './pages/News';
 import DatabasePage from './pages/DatabasePage';
 import Reports from './pages/Reports';
+import TechRoutes from './pages/TechRoutes';
 
 export default function App() {
   return (
@@ -13,9 +14,10 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/articles" element={<Articles />} />
+          <Route path="/news" element={<News />} />
           <Route path="/database" element={<DatabasePage />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/tech-routes" element={<TechRoutes />} />
         </Routes>
         <ScrollToTop />
       </div>

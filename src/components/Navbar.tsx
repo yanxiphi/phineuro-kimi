@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Menu, X, Brain, Database, FileText, Home, Newspaper } from 'lucide-react';
+import { Menu, X, Brain, Database, FileText, Home, Radio, Cpu } from 'lucide-react';
 
 interface NavLink {
   label: string;
@@ -10,9 +10,10 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { label: '首页', path: '/', icon: Home },
-  { label: '文章', path: '/articles', icon: Newspaper },
+  { label: '前沿资讯', path: '/news', icon: Radio },
   { label: '数据库', path: '/database', icon: Database },
   { label: '报告', path: '/reports', icon: FileText },
+  { label: '技术路径', path: '/tech-routes', icon: Cpu },
 ];
 
 export default function Navbar() {
@@ -68,7 +69,7 @@ export default function Navbar() {
                 PhiNeuro
               </span>
               <span className="text-[10px] text-slate-blue/60 tracking-widest uppercase -mt-0.5">
-                Neuroscience & Philosophy
+                Neuro神经科技前沿
               </span>
             </div>
           </button>

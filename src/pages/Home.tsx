@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import {
   Brain, Newspaper, Database, FileText, ArrowRight,
-  ChevronRight, Clock, BookOpen, TrendingUp, Check
+  ChevronRight, Clock, BookOpen, TrendingUp, Check, Cpu
 } from 'lucide-react';
 import NeuronCanvas from '../components/NeuronCanvas';
 
@@ -94,7 +94,7 @@ export default function Home() {
           <div className={`mb-4 transition-all duration-700 ease-out ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
             <div className="w-10 h-px bg-gold mx-auto mb-3"></div>
             <span className="text-xs font-medium tracking-[0.2em] text-gold uppercase">
-              神经科学 × 哲学
+              神经科技 x 脑机接口 x 认知科学
             </span>
           </div>
 
@@ -103,7 +103,7 @@ export default function Home() {
             className={`font-serif text-4xl md:text-5xl font-bold text-white leading-tight mb-4 transition-all duration-1000 ease-out delay-200 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
           >
-            探索认知边界
+            专注神经科技，探索认知边界
           </h1>
 
           {/* Subtitle */}
@@ -115,10 +115,10 @@ export default function Home() {
           {/* CTAs */}
           <div className={`flex flex-wrap items-center justify-center gap-4 transition-all duration-700 ease-out delay-700 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <button
-              onClick={() => navigate('/articles')}
+              onClick={() => navigate('/news')}
               className="h-12 px-7 bg-gold hover:bg-gold-light text-charcoal font-semibold text-sm rounded-full transition-all hover:scale-[1.02]"
             >
-              浏览文章
+              浏览前沿资讯
             </button>
             <button
               onClick={() => navigate('/database')}
@@ -151,7 +151,7 @@ export default function Home() {
                 <nav className="space-y-0.5">
                   {[
                     { label: '首页', active: true },
-                    { label: '文章撰写', path: '/articles' },
+                    { label: '前沿资讯', path: '/news' },
                     { label: '企业数据库', path: '/database' },
                     { label: 'BCI报告', path: '/reports' },
                   ].map((item) => (
@@ -188,24 +188,24 @@ export default function Home() {
               <div className="animate-in mb-10">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-1 h-6 bg-gold rounded-full"></div>
-                  <h2 className="font-serif text-2xl font-bold text-burgundy">三大核心板块</h2>
+                  <h2 className="font-serif text-2xl font-bold text-burgundy">四大核心板块</h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Articles Card */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* News Card */}
                   <button
-                    onClick={() => navigate('/articles')}
+                    onClick={() => navigate('/news')}
                     className="group bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 p-5 border border-border-light hover:border-burgundy/20 text-left cursor-pointer"
                   >
                     <div className="w-12 h-12 rounded-lg bg-burgundy/10 flex items-center justify-center mb-4 group-hover:bg-burgundy/20 transition-colors">
                       <Newspaper size={24} className="text-burgundy" />
                     </div>
-                    <h4 className="text-sm font-semibold text-burgundy mb-2">文章撰写</h4>
+                    <h4 className="text-sm font-semibold text-burgundy mb-2">前沿资讯</h4>
                     <p className="text-[12px] text-text-secondary line-clamp-2 mb-3 leading-relaxed">
-                      神经科学与哲学交叉视角的深度文章，追踪脑科学前沿动态。
+                      政策动态、前沿论文、新闻报道，追踪神经科技最新资讯。
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-gold font-medium">深度解读</span>
+                      <span className="text-[11px] text-gold font-medium">实时更新</span>
                       <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
                         进入 <ArrowRight size={12} />
                       </span>
@@ -257,6 +257,29 @@ export default function Home() {
                       </span>
                     </div>
                   </button>
+
+                  {/* Tech Routes Card */}
+                  <button
+                    onClick={() => navigate('/tech-routes')}
+                    className="group bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 p-5 border border-border-light hover:border-burgundy/20 text-left cursor-pointer relative"
+                  >
+                    <div className="absolute top-3 right-3 px-2 py-0.5 text-[10px] bg-gold/20 text-gold-dark rounded-full font-semibold">
+                      NEW
+                    </div>
+                    <div className="w-12 h-12 rounded-lg bg-burgundy/10 flex items-center justify-center mb-4 group-hover:bg-burgundy/20 transition-colors">
+                      <Cpu size={24} className="text-burgundy" />
+                    </div>
+                    <h4 className="text-sm font-semibold text-burgundy mb-2">技术路径</h4>
+                    <p className="text-[12px] text-text-secondary line-clamp-2 mb-3 leading-relaxed">
+                      BCI技术路径解析、训练数据集、训练设备产品展示与购买。
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-gold font-medium">产品在售</span>
+                      <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
+                        进入 <ArrowRight size={12} />
+                      </span>
+                    </div>
+                  </button>
                 </div>
               </div>
 
@@ -265,10 +288,10 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-1 h-6 bg-gold rounded-full"></div>
-                    <h2 className="font-serif text-2xl font-bold text-burgundy">精选文章</h2>
+                    <h2 className="font-serif text-2xl font-bold text-burgundy">精选资讯</h2>
                   </div>
                   <button
-                    onClick={() => navigate('/articles')}
+                    onClick={() => navigate('/news')}
                     className="text-[13px] text-slate-blue hover:text-burgundy flex items-center gap-1 transition-colors"
                   >
                     查看更多 <ChevronRight size={14} />
@@ -279,7 +302,7 @@ export default function Home() {
                   {previewArticles.map((item) => (
                     <article
                       key={item.id}
-                      onClick={() => navigate('/articles')}
+                      onClick={() => navigate('/news')}
                       className={`animate-in flex gap-4 bg-white rounded-lg border transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 group cursor-pointer ${
                         item.featured ? 'border-l-[3px] border-l-gold border-border-light' : 'border-border-light hover:border-l-[3px] hover:border-l-gold'
                       }`}
@@ -386,7 +409,7 @@ export default function Home() {
                   <h4 className="text-base font-semibold text-burgundy mb-3">快速导航</h4>
                   <div className="space-y-2">
                     {[
-                      { label: '文章撰写', path: '/articles', desc: '神经科学×哲学深度文章' },
+                      { label: '前沿资讯', path: '/news', desc: '政策·论文·新闻实时追踪' },
                       { label: '企业数据库', path: '/database', desc: '105+神经科技企业' },
                       { label: 'BCI行业报告', path: '/reports', desc: '市场分析·技术趋势' },
                     ].map((link) => (
@@ -484,7 +507,7 @@ export default function Home() {
               <ul className="space-y-2.5">
                 {[
                   { label: '首页', path: '/' },
-                  { label: '文章撰写', path: '/articles' },
+                  { label: '前沿资讯', path: '/news' },
                   { label: '企业数据库', path: '/database' },
                   { label: 'BCI行业报告', path: '/reports' },
                 ].map((link) => (
