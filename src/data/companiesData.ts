@@ -84,7 +84,7 @@ export const companiesData: Company[] = [
     fundingStage: "B轮",
     crossInnovation: ["具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 2,
     name: "脑虎科技",
@@ -126,7 +126,7 @@ export const companiesData: Company[] = [
     fundingStage: "B轮",
     crossInnovation: ["AI+脑机"],
     country: "中国",
-  \},
+  },
   {
     id: 3,
     name: "博睿康",
@@ -168,7 +168,7 @@ export const companiesData: Company[] = [
     fundingStage: "D轮及以后",
     crossInnovation: ["神经调控"],
     country: "中国",
-  \},
+  },
   {
     id: 4,
     name: "智冉医疗",
@@ -210,7 +210,7 @@ export const companiesData: Company[] = [
     fundingStage: "A轮",
     crossInnovation: ["具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 5,
     name: "衷华脑机",
@@ -252,7 +252,7 @@ export const companiesData: Company[] = [
     fundingStage: "未披露/自研",
     crossInnovation: ["具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 6,
     name: "明视脑机",
@@ -294,7 +294,7 @@ export const companiesData: Company[] = [
     fundingStage: "天使轮/种子轮",
     crossInnovation: [],
     country: "中国",
-  \},
+  },
   {
     id: 7,
     name: "芯智达",
@@ -336,7 +336,7 @@ export const companiesData: Company[] = [
     fundingStage: "未披露/自研",
     crossInnovation: [],
     country: "中国",
-  \},
+  },
   {
     id: 8,
     name: "强脑科技",
@@ -378,7 +378,7 @@ export const companiesData: Company[] = [
     fundingStage: "独角兽",
     crossInnovation: ["具身智能", "多模态融合"],
     country: "中国",
-  \},
+  },
   {
     id: 9,
     name: "傲意科技",
@@ -420,7 +420,7 @@ export const companiesData: Company[] = [
     fundingStage: "C轮",
     crossInnovation: ["多模态融合", "具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 10,
     name: "臻泰智能",
@@ -462,7 +462,7 @@ export const companiesData: Company[] = [
     fundingStage: "A轮",
     crossInnovation: ["具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 11,
     name: "术理创新",
@@ -504,7 +504,7 @@ export const companiesData: Company[] = [
     fundingStage: "C轮",
     crossInnovation: ["神经调控"],
     country: "中国",
-  \},
+  },
   {
     id: 12,
     name: "柔灵科技",
@@ -546,7 +546,7 @@ export const companiesData: Company[] = [
     fundingStage: "天使轮/种子轮",
     crossInnovation: ["多模态融合"],
     country: "中国",
-  \},
+  },
   {
     id: 13,
     name: "念通智能",
@@ -588,7 +588,7 @@ export const companiesData: Company[] = [
     fundingStage: "未披露/自研",
     crossInnovation: ["具身智能"],
     country: "中国",
-  \},
+  },
   {
     id: 14,
     name: "脑陆科技",
@@ -630,7 +630,7 @@ export const companiesData: Company[] = [
     fundingStage: "未披露/自研",
     crossInnovation: [],
     country: "中国",
-  \},
+  },
   {
     id: 15,
     name: "应脉医疗",
@@ -672,7 +672,7 @@ export const companiesData: Company[] = [
     fundingStage: "未披露/自研",
     crossInnovation: [],
     country: "中国",
-  \},
+  },
   {
     id: 16,
     name: "景昱医疗",

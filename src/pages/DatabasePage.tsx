@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import {
-  Search, Filter, X, ExternalLink, Mail, Phone, Building2, FlaskConical,
+  Search, Filter, X, ExternalLink, Mail, Building2,
   MapPin, Award, TrendingUp, Database as DatabaseIcon, ChevronDown, ChevronUp,
   ArrowLeft, Layers, Stethoscope, Tag, Grid3X3, Microscope,
   BrainCircuit, Activity, Target, Box, Users,
@@ -9,12 +9,9 @@ import {
 } from 'lucide-react';
 import { companiesData, getTechRouteMain, getFundingDisplay } from '../data/companiesData';
 import {
-  TECH_ROUTES, DISEASE_CATEGORIES, CHAIN_POSITIONS,
-  CLINICAL_STAGES, REGULATORY_STATUS, PRODUCT_FORMS,
-  BUSINESS_MODELS, FUNDING_STAGES, CROSS_INNOVATION,
+  TECH_ROUTES, DISEASE_CATEGORIES,
   getTechRouteColor, getClinicalStageColor, getDiseaseColor,
   getChainLevel, getChainLevelColor, TAG_DIMENSIONS,
-  type TagDimension,
 } from '../data/databaseTags';
 import type { Company } from '../data/companiesData';
 
@@ -406,8 +403,6 @@ function TagFilterPanel({ filters, onChange, onClear }: {
         <div className="flex flex-wrap gap-1.5">
           {ALL_DIMENSION_KEYS.flatMap(key =>
             filters[key].map(value => {
-              const dim = TAG_DIMENSIONS.find(d => d.id === key);
-              return (
                 <button key={`${key}-${value}`} onClick={() => toggleTag(key, value)}
                   className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs bg-burgundy/10 text-burgundy hover:bg-red-50 transition-colors">
                   {value} <X className="w-3 h-3" />
@@ -529,9 +524,7 @@ function DiseaseView({ companies, onSelectIndication }: {
 // ============================================
 
 function ChainView({ companies }: { companies: Company[] }) {
-  const [selectedRoute, setSelectedRoute] = useState(TECH_ROUTES[0].value);
-
-  const routeColor = TECH_ROUTES.find(r => r.value === selectedRoute)?.color || '#7F8C8D';
+  const [selectedRoute, setSelectedRoute] = useState<string>(TECH_ROUTES[0].value);
 
   const levels = ['上游', '中游', '下游'] as const;
   const levelLabels: Record<string, { title: string; icon: any; color: string }> = {
@@ -800,7 +793,6 @@ export default function DatabasePage() {
               {ALL_DIMENSION_KEYS.flatMap(key =>
                 filters[key].map(value => (
                   <button key={`${key}-${value}`} onClick={() => {
-                    const dim = TAG_DIMENSIONS.find(d => d.id === key);
                     setFilters(prev => ({ ...prev, [key]: prev[key].filter(v => v !== value) }));
                   }} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-burgundy/10 text-burgundy hover:bg-red-50 transition-colors">
                     {value} <XCircle className="w-3 h-3" />
