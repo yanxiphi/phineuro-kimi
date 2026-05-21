@@ -402,13 +402,12 @@ function TagFilterPanel({ filters, onChange, onClear }: {
       {filterCount > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {ALL_DIMENSION_KEYS.flatMap(key =>
-            filters[key].map(value => {
-                <button key={`${key}-${value}`} onClick={() => toggleTag(key, value)}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs bg-burgundy/10 text-burgundy hover:bg-red-50 transition-colors">
-                  {value} <X className="w-3 h-3" />
-                </button>
-              );
-            })
+            filters[key].map(value => (
+              <button key={`${key}-${value}`} onClick={() => toggleTag(key, value)}
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs bg-burgundy/10 text-burgundy hover:bg-red-50 transition-colors">
+                {value} <X className="w-3 h-3" />
+              </button>
+            ))
           )}
         </div>
       )}
