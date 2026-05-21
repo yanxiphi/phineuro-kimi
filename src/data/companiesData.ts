@@ -30,6 +30,16 @@ export interface Company {
   email: string;
   phone: string;
   dataSource: string;
+  // 九维标签体系（可选字段，逐步完善）
+  diseaseAreas?: string[];
+  diseaseIndications?: string[];
+  clinicalStage?: string;
+  regulatoryStatus?: string[];
+  productForm?: string;
+  businessModel?: string[];
+  fundingStage?: string;
+  crossInnovation?: string[];
+  country?: string;
 }
 
 export const companiesData: Company[] = [
