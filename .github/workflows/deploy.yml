@@ -21,12 +21,10 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: 20260520_3个模块增加
-        run: npm ci
+        run: cd "20260520_3个模块增加" && npm ci
 
       - name: Build
-        working-directory: 20260520_3个模块增加
-        run: npm run build
+        run: cd "20260520_3个模块增加" && npm run build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
@@ -34,5 +32,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: phineuro-website
-          directory: 20260520_3个模块增加/dist
+          directory: ./20260520_3个模块增加/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
