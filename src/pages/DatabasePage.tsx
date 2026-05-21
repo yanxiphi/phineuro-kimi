@@ -243,6 +243,120 @@ function DetailItem({ label, value }: { label: string; value?: string | null }) 
 }
 
 // ============================================
+// 子组件：企业表格
+// ============================================
+
+function CompanyTable({ companies, expandedId, onToggle }: {
+  companies: Company[]; expandedId: number | null; onToggle: (id: number) => void;
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-card">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-burgundy/5 border-b border-gray-200">
+            <tr>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-10">#</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[140px]">企业名称</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[90px]">技术路线</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[100px]">细分赛道</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[80px]">产业链</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[90px]">疾病领域</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[70px]">临床阶段</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[60px]">总部</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[70px]">融资</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-12">详情</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {companies.map(company => (
+              <>
+                <tr key={company.id} className="hover:bg-burgundy/[0.02] cursor-pointer transition-colors"
+                  onClick={() => onToggle(company.id)}>
+                  <td className="px-3 py-2.5 text-slate-blue/50">{company.id}</td>
+                  <td className="px-3 py-2.5">
+                    <div className="font-medium text-foreground">{company.name}</div>
+                    <div className="text-xs text-slate-blue/40">{company.nameEn}</div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium text-white" style={{ backgroundColor: getTechRouteColor(company.techRoute) }}>
+                      {company.techRoute.split('（')[0].split('+')[0]}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2.5 text-slate-blue truncate max-w-[120px]">{company.segment.split('/')[0]}</td>
+                  <td className="px-3 py-2.5 text-slate-blue">{company.chainPosition.split('-')[0]}</td>
+                  <td className="px-3 py-2.5">
+                    {company.diseaseAreas?.[0] ? (
+                      <span className="inline-flex px-2 py-0.5 rounded text-xs" style={{ backgroundColor: `${getDiseaseColor(company.diseaseAreas[0])}15`, color: getDiseaseColor(company.diseaseAreas[0]) }}>
+                        {company.diseaseAreas[0]}
+                      </span>
+                    ) : (
+                      <span className="text-slate-blue/40">-</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {company.clinicalStage ? (
+                      <span className="inline-flex px-2 py-0.5 rounded text-xs" style={{ backgroundColor: `${getClinicalStageColor(company.clinicalStage)}15`, color: getClinicalStageColor(company.clinicalStage) }}>
+                        {company.clinicalStage}
+                      </span>
+                    ) : (
+                      <span className="text-slate-blue/40">-</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5 text-slate-blue/70">{company.location?.split('/')[0] || '-'}</td>
+                  <td className="px-3 py-2.5">
+                    {company.totalFunding ? (
+                      <span className="font-medium text-burgundy">{getFundingDisplay(company.totalFunding)}</span>
+                    ) : (
+                      <span className="text-slate-blue/40">-</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {expandedId === company.id ? <ChevronUp className="w-4 h-4 text-burgundy" /> : <ChevronDown className="w-4 h-4 text-slate-blue/40" />}
+                  </td>
+                </tr>
+                {expandedId === company.id && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-4 bg-burgundy/[0.02] border-t border-gray-50">
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div className="space-y-1.5">
+                          <DetailItem label="创始人" value={company.founder} />
+                          <DetailItem label="核心产品" value={company.products} />
+                          <DetailItem label="产品阶段" value={company.productStage} />
+                          <DetailItem label="最新融资" value={`${company.latestRound} ${company.latestAmount ? `(${company.latestAmount}亿)` : ''}`} />
+                        </div>
+                        <div className="space-y-1.5">
+                          <DetailItem label="疾病领域" value={company.diseaseAreas?.join('、')} />
+                          <DetailItem label="适应症" value={company.diseaseIndications?.join('、')} />
+                          <DetailItem label="交叉创新" value={company.crossInnovation?.join('、')} />
+                          <DetailItem label="优势" value={company.advantage} />
+                        </div>
+                        <div className="md:col-span-2 flex flex-wrap gap-2 pt-1">
+                          {company.website && (
+                            <a href={company.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-burgundy/10 text-burgundy text-sm hover:bg-burgundy hover:text-white transition-colors">
+                              <ExternalLink className="w-3 h-3" /> 官网
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {companies.length === 0 && (
+        <div className="py-16 text-center">
+          <Search className="w-12 h-12 text-slate-blue/20 mx-auto mb-4" />
+          <p className="text-slate-blue/50">未找到匹配的企业，请尝试其他筛选条件</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================
 // 子组件：标签筛选面板
 // ============================================
 
@@ -553,7 +667,8 @@ export default function DatabasePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<ActiveFilters>(INITIAL_FILTERS);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const [listViewMode, setListViewMode] = useState<'card' | 'table'>('table');
 
   // 统计数据
   const stats = useMemo(() => {
@@ -715,12 +830,34 @@ export default function DatabasePage() {
             )}
             {viewMode === 'list' && (
               <div className="space-y-3">
-                {filteredCompanies.map(company => (
-                  <CompanyCard key={company.id} company={company}
-                    expanded={expandedId === company.id}
-                    onToggle={() => setExpandedId(expandedId === company.id ? null : company.id)}
-                  />
-                ))}
+                {/* 卡片/表格切换 */}
+                <div className="flex justify-end gap-2">
+                  <button onClick={() => setListViewMode('table')}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      listViewMode === 'table' ? 'bg-burgundy text-white' : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
+                    }`}>
+                    <Grid3X3 className="w-3.5 h-3.5" /> 表格
+                  </button>
+                  <button onClick={() => setListViewMode('card')}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      listViewMode === 'card' ? 'bg-burgundy text-white' : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
+                    }`}>
+                    <Layers className="w-3.5 h-3.5" /> 卡片
+                  </button>
+                </div>
+                {listViewMode === 'table' ? (
+                  <CompanyTable companies={filteredCompanies} expandedId={expandedId}
+                    onToggle={(id) => setExpandedId(expandedId === id ? null : id)} />
+                ) : (
+                  <>
+                    {filteredCompanies.map(company => (
+                      <CompanyCard key={company.id} company={company}
+                        expanded={expandedId === company.id}
+                        onToggle={() => setExpandedId(expandedId === company.id ? null : company.id)}
+                      />
+                    ))}
+                  </>
+                )}
                 {filteredCompanies.length === 0 && (
                   <div className="py-16 text-center">
                     <Search className="w-12 h-12 text-slate-blue/20 mx-auto mb-4" />
@@ -737,7 +874,7 @@ export default function DatabasePage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-slate-blue/40">
-          <p>数据截止 2026年5月 | 共收录 {companiesData.length} 家中国境内神经科技企业 | 九维标签体系 v1.0</p>
+          <p>数据截止 2026年5月 | 共收录 {companiesData.length} 家全球神经科技企业（中国+海外） | 九维标签体系 v1.0</p>
         </div>
       </div>
     </div>
