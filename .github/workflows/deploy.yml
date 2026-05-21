@@ -1,25 +1,16 @@
-name: Deploy to GitHub Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,24 +20,21 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: 20260520_3个模块增加/package-lock.json
 
       - name: Install dependencies
+        working-directory: 20260520_3个模块增加
         run: npm ci
 
       - name: Build
+        working-directory: 20260520_3个模块增加
         run: npm run build
 
-      - name: Create CNAME for custom domain
-        run: echo 'phineuro.life' > dist/CNAME
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          path: './dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: phineuro-website
+          directory: 20260520_3个模块增加/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
