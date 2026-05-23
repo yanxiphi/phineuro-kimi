@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
+import { useState, useEffect } from 'react';
 import {
   ArrowLeft, Building2, MapPin, Calendar, Cpu,
   DollarSign, Award, Mail, Phone, FileText, Globe,
@@ -59,11 +60,41 @@ function ChipRow({ label, values, getColor }: { label: string; values?: string[]
   );
 }
 
+interface IntelFeed {
+  id: number;
+  title: string;
+  title_zh?: string;
+  summary: string;
+  summary_zh?: string;
+  category: string;
+  published_at: string;
+  source_name: string;
+  url: string;
+}
+
 export default function CompanyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const companyId = Number(id);
   const company = companiesData.find(c => c.id === companyId);
+  const [linkedIntel, setLinkedIntel] = useState<IntelFeed[]>([]);
+  const [intelLoading, setIntelLoading] = useState(false);
+
+  useEffect(() => {
+    if (companyId) {
+      setIntelLoading(true);
+      fetch(`https://datasets.phineuro.life/api/intel/by-company/${companyId}?limit=10`)
+        .then(res => res.json())
+        .then(data => {
+          setLinkedIntel(data.data || []);
+          setIntelLoading(false);
+        })
+        .catch(() => {
+          setLinkedIntel([]);
+          setIntelLoading(false);
+        });
+    }
+  }, [companyId]);
 
   if (!company) {
     return (
@@ -269,6 +300,52 @@ export default function CompanyDetailPage() {
                   {company.phone}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* 相关情报 */}
+        {linkedIntel.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-burgundy/10 flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-burgundy" />
+              </div>
+              <h3 className="font-semibold text-foreground">相关情报</h3>
+              <span className="text-xs text-slate-blue/40 ml-2">{linkedIntel.length} 条</span>
+            </div>
+            <div className="space-y-3">
+              {linkedIntel.map(feed => (
+                <a
+                  key={feed.id}
+                  href={feed.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-3 rounded-lg bg-gray-50 hover:bg-burgundy/5 transition-colors group"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground group-hover:text-burgundy transition-colors line-clamp-2">
+                        {feed.title_zh || feed.title}
+                      </p>
+                      <p className="text-xs text-slate-blue/50 mt-1 line-clamp-2">
+                        {feed.summary_zh || feed.summary}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-blue/40">
+                        <span>{feed.source_name}</span>
+                        <span>{new Date(feed.published_at).toLocaleDateString('zh-CN')}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                          feed.category === '融资' ? 'bg-green-50 text-green-600' :
+                          feed.category === '临床' ? 'bg-blue-50 text-blue-600' :
+                          feed.category === '政策' ? 'bg-amber-50 text-amber-600' :
+                          feed.category === '学术' ? 'bg-burgundy/10 text-burgundy' :
+                          'bg-gray-50 text-gray-500'
+                        }`}>{feed.category}</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         )}
