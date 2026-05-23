@@ -11,6 +11,8 @@ interface IntelFeed {
   id: string;
   title: string;
   summary: string;
+  title_zh?: string;
+  summary_zh?: string;
   published_at: string;
   category: string;
   source_name: string;
@@ -233,7 +235,7 @@ export default function Home() {
                       <div className="flex-1 pb-1">
                         <span className="text-[11px] text-white/40 font-mono">{formatTime(feed.published_at)}</span>
                         <p className="text-[13px] text-white/85 leading-snug mt-0.5 group-hover:text-gold transition-colors line-clamp-2">
-                          {feed.title}
+                          {feed.title_zh || feed.title}
                         </p>
                       </div>
                     </a>

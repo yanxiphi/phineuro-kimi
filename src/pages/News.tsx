@@ -22,6 +22,8 @@ interface IntelFeed {
   id: string;
   title: string;
   summary: string;
+  title_zh?: string;
+  summary_zh?: string;
   url: string;
   source_name: string;
   published_at: string;
@@ -340,11 +342,16 @@ export default function NewsPage() {
                           </span>
                         </div>
                         <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burgundy transition-colors">
-                          {feed.title}
+                          {feed.title_zh || feed.title}
                         </h3>
-                        <p className="text-sm text-text-secondary leading-relaxed mb-3">
-                          {feed.summary}
+                        <p className="text-sm text-text-secondary leading-relaxed mb-3 line-clamp-4">
+                          {feed.summary_zh || feed.summary}
                         </p>
+                        {feed.title_zh && (
+                          <p className="text-xs text-slate-blue/40 italic mb-2">
+                            原文：{feed.title}
+                          </p>
+                        )}
                         <div className="flex items-center gap-4 text-xs text-slate-blue">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
