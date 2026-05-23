@@ -704,7 +704,8 @@ export const companiesData: Company[] = [
     dataSource: "健康界/中国食品药品网",
     website: "http://www.sceneray.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 17,
@@ -737,7 +738,8 @@ export const companiesData: Company[] = [
     dataSource: "网易新闻/脑机接口产业联盟",
     website: "http://www.pinsmedical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 18,
@@ -770,7 +772,8 @@ export const companiesData: Company[] = [
     dataSource: "雪球/国信证券",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 19,
@@ -803,7 +806,8 @@ export const companiesData: Company[] = [
     dataSource: "百度百科/交汇点新闻",
     website: "https://www.nirs-medical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 20,
@@ -836,7 +840,8 @@ export const companiesData: Company[] = [
     dataSource: "峰瑞资本/36氪",
     website: "https://www.neurogalaxy.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 21,
@@ -869,7 +874,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报/36氪",
     website: "https://www.heartcare.net.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 22,
@@ -902,7 +908,8 @@ export const companiesData: Company[] = [
     dataSource: "微信公众号",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 23,
@@ -935,7 +942,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/龙华新闻",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 24,
@@ -968,7 +976,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/文汇报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 25,
@@ -1001,7 +1010,8 @@ export const companiesData: Company[] = [
     dataSource: "凤凰财经",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 26,
@@ -1034,7 +1044,8 @@ export const companiesData: Company[] = [
     dataSource: "东方财富/经济观察网",
     website: "https://www.sanbo.org",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 27,
@@ -1067,7 +1078,8 @@ export const companiesData: Company[] = [
     dataSource: "第一财经/上海证券报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 28,
@@ -1100,7 +1112,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报/国信证券",
     website: "https://www.aipengmedical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 29,
@@ -1133,7 +1146,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.xiangyumedical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 30,
@@ -1166,7 +1180,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.vishee.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 31,
@@ -1199,7 +1214,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.chengyitong.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 32,
@@ -1232,7 +1248,8 @@ export const companiesData: Company[] = [
     dataSource: "华安证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 33,
@@ -1265,7 +1282,8 @@ export const companiesData: Company[] = [
     dataSource: "雪球/国信证券",
     website: "https://www.hanwei.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 34,
@@ -1298,7 +1316,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/半导体芯科技",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 35,
@@ -1331,7 +1350,8 @@ export const companiesData: Company[] = [
     dataSource: "海南大学官微/半导体芯科技",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 36,
@@ -1364,7 +1384,8 @@ export const companiesData: Company[] = [
     dataSource: "QQ新闻月度观察",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 37,
@@ -1397,7 +1418,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/Leaderobot",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 38,
@@ -1430,7 +1452,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 39,
@@ -1463,7 +1486,8 @@ export const companiesData: Company[] = [
     dataSource: "Leaderobot/36氪",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 40,
@@ -1496,7 +1520,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/博拓生物公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 41,
@@ -1529,7 +1554,8 @@ export const companiesData: Company[] = [
     dataSource: "雪球/力合科创公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 42,
@@ -1562,7 +1588,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.meland-medical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 43,
@@ -1595,7 +1622,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.yanstech.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 44,
@@ -1628,7 +1656,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/迈普医学公告",
     website: "https://www.guanhao.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 45,
@@ -1661,7 +1690,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/公司公告",
     website: "https://www.medprin.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 46,
@@ -1694,7 +1724,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/江苏省工信厅",
     website: "http://www.njpanda.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 47,
@@ -1727,7 +1758,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报",
     website: "https://www.beoka.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 48,
@@ -1760,7 +1792,8 @@ export const companiesData: Company[] = [
     dataSource: "华安证券研报",
     website: "https://www.entertech.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 49,
@@ -1793,7 +1826,8 @@ export const companiesData: Company[] = [
     dataSource: "华安证券研报/脑机接口产业联盟",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 50,
@@ -1826,7 +1860,8 @@ export const companiesData: Company[] = [
     dataSource: "前瞻经济学人/动脉网",
     website: "http://www.kedoubc.com",
     email: "kedou@kedoubc.com",
-    phone: "0512-66101401"
+    phone: "0512-66101401",
+    country: '中国',
   },
   {
     id: 51,
@@ -1859,7 +1894,8 @@ export const companiesData: Company[] = [
     dataSource: "机器人科学与技术",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 52,
@@ -1892,7 +1928,8 @@ export const companiesData: Company[] = [
     dataSource: "圆梦财经/国信证券",
     website: "https://www.lepu.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 53,
@@ -1925,7 +1962,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/博望财经",
     website: "https://www.mehowmedical.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 54,
@@ -1958,7 +1996,8 @@ export const companiesData: Company[] = [
     dataSource: "东方财富",
     website: "https://www.cofoe.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 55,
@@ -1991,7 +2030,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券",
     website: "https://www.intretech.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 56,
@@ -2024,7 +2064,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "https://www.zkteco.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 57,
@@ -2057,7 +2098,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "https://www.cosonic.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 58,
@@ -2090,7 +2132,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券",
     website: "https://www.dnake.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 59,
@@ -2123,7 +2166,8 @@ export const companiesData: Company[] = [
     dataSource: "雪球/公司公告",
     website: "https://www.leaguer.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 60,
@@ -2156,7 +2200,8 @@ export const companiesData: Company[] = [
     dataSource: "36氪/公司公告",
     website: "https://www.biotests.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 61,
@@ -2189,7 +2234,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "https://www.37.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 62,
@@ -2222,7 +2268,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 63,
@@ -2255,7 +2302,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 64,
@@ -2288,7 +2336,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 65,
@@ -2321,7 +2370,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 66,
@@ -2354,7 +2404,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.ponytest.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 67,
@@ -2387,7 +2438,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.dhcc.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 68,
@@ -2420,7 +2472,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.hnlens.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 69,
@@ -2453,7 +2506,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报",
     website: "https://www.lingyitech.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 70,
@@ -2486,7 +2540,8 @@ export const companiesData: Company[] = [
     dataSource: "和讯网",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 71,
@@ -2519,7 +2574,8 @@ export const companiesData: Company[] = [
     dataSource: "和讯网",
     website: "https://www.rongtai.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 72,
@@ -2552,7 +2608,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 73,
@@ -2585,7 +2642,8 @@ export const companiesData: Company[] = [
     dataSource: "上海证券报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 74,
@@ -2618,7 +2676,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 75,
@@ -2651,7 +2710,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 76,
@@ -2684,7 +2744,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 77,
@@ -2717,7 +2778,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 78,
@@ -2750,7 +2812,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 79,
@@ -2783,7 +2846,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 80,
@@ -2816,7 +2880,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 81,
@@ -2849,7 +2914,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 82,
@@ -2882,7 +2948,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 83,
@@ -2915,7 +2982,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 84,
@@ -2948,7 +3016,8 @@ export const companiesData: Company[] = [
     dataSource: "国信证券/前瞻经济学人",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 85,
@@ -2981,7 +3050,8 @@ export const companiesData: Company[] = [
     dataSource: "新浪财经/国信证券",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 86,
@@ -3014,7 +3084,8 @@ export const companiesData: Company[] = [
     dataSource: "三博脑科公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 87,
@@ -3047,7 +3118,8 @@ export const companiesData: Company[] = [
     dataSource: "三博脑科公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 88,
@@ -3080,7 +3152,8 @@ export const companiesData: Company[] = [
     dataSource: "三博脑科公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 89,
@@ -3113,7 +3186,8 @@ export const companiesData: Company[] = [
     dataSource: "三博脑科公告",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 90,
@@ -3146,7 +3220,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报",
     website: "https://www.willsemi.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 91,
@@ -3179,7 +3254,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报",
     website: "https://www.huazhu.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 92,
@@ -3212,7 +3288,8 @@ export const companiesData: Company[] = [
     dataSource: "证券时报",
     website: "https://www.100tal.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 93,
@@ -3245,7 +3322,8 @@ export const companiesData: Company[] = [
     dataSource: "东方财富",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 94,
@@ -3278,7 +3356,8 @@ export const companiesData: Company[] = [
     dataSource: "新浪财经",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 95,
@@ -3311,7 +3390,8 @@ export const companiesData: Company[] = [
     dataSource: "金融界",
     website: "https://www.keeson.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 96,
@@ -3344,7 +3424,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.yhlo.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 97,
@@ -3377,7 +3458,8 @@ export const companiesData: Company[] = [
     dataSource: "新浪财经",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 98,
@@ -3410,7 +3492,8 @@ export const companiesData: Company[] = [
     dataSource: "新浪财经",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 99,
@@ -3443,7 +3526,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 100,
@@ -3476,7 +3560,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.baiyangpharm.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 101,
@@ -3509,7 +3594,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "https://www.evebattery.com",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 102,
@@ -3542,7 +3628,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 103,
@@ -3575,7 +3662,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 104,
@@ -3608,7 +3696,8 @@ export const companiesData: Company[] = [
     dataSource: "财联社",
     website: "",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   {
     id: 105,
@@ -3641,7 +3730,8 @@ export const companiesData: Company[] = [
     dataSource: "西南证券研报",
     website: "https://www.casicinfo.com.cn",
     email: "",
-    phone: ""
+    phone: "",
+    country: '中国',
   },
   // ============================================
   // 海外企业
