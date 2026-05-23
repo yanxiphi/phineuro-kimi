@@ -6,6 +6,7 @@ import News from './pages/News';
 import DatabasePage from './pages/DatabasePage';
 import Reports from './pages/Reports';
 import TechRoutes from './pages/TechRoutes';
+import CompanyDetailPage from './pages/CompanyDetailPage';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/database" element={<DatabasePage />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/tech-routes" element={<TechRoutes />} />
+          <Route path="/company/:id" element={<CompanyDetailPage />} />
         </Routes>
         <ScrollToTop />
       </div>

@@ -2,9 +2,30 @@ import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import {
   Brain, Newspaper, Database, FileText, ArrowRight,
-  ChevronRight, Clock, BookOpen, TrendingUp, Check, Cpu
+  ChevronRight, Clock, BookOpen, TrendingUp, Check, Cpu,
+  Zap, Calendar, ExternalLink
 } from 'lucide-react';
-import NeuronCanvas from '../components/NeuronCanvas';
+// import NeuronCanvas from '../components/NeuronCanvas';
+
+interface IntelFeed {
+  id: string;
+  title: string;
+  summary: string;
+  published_at: string;
+  category: string;
+  source_name: string;
+}
+
+function formatTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function isWithin24h(dateStr: string): boolean {
+  const now = new Date().getTime();
+  const d = new Date(dateStr).getTime();
+  return (now - d) < 24 * 60 * 60 * 1000;
+}
 
 const previewArticles = [
   {
@@ -66,66 +87,160 @@ const dbHighlights = [
 export default function Home() {
   const navigate = useNavigate();
   const [heroVisible, setHeroVisible] = useState(false);
+  const [intelFeeds, setIntelFeeds] = useState<IntelFeed[]>([]);
+  const [intelLoading, setIntelLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setHeroVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    fetch('https://datasets.phineuro.life/api/intel?limit=5')
+      .then((res) => res.json())
+      .then((data) => {
+        setIntelFeeds(data.data || []);
+        setIntelLoading(false);
+      })
+      .catch(() => {
+        setIntelFeeds([]);
+        setIntelLoading(false);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen bg-cream">
       {/* ===== Hero Section ===== */}
-      <section
-        className="relative w-full min-h-[600px] h-screen flex items-center justify-center overflow-hidden"
-      >
-        <NeuronCanvas />
+      <section className="relative w-full min-h-[700px] h-screen flex items-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
+          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+        />
 
-        {/* Gradient Overlays */}
+        {/* Gradient Overlays - 左红右蓝渐变 */}
         <div className="absolute inset-0 z-[1]" style={{
-          background: 'linear-gradient(135deg, rgba(26,26,46,0.85) 0%, rgba(90,37,44,0.75) 50%, rgba(114,47,55,0.65) 100%)'
+          background: 'linear-gradient(135deg, rgba(114,47,55,0.88) 0%, rgba(80,30,40,0.80) 35%, rgba(30,35,60,0.85) 65%, rgba(15,25,50,0.92) 100%)'
         }} />
         <div className="absolute inset-0 z-[1]" style={{
-          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(26,26,46,0.4) 100%)'
+          background: 'radial-gradient(ellipse at 75% center, rgba(74,85,104,0.35) 0%, transparent 60%)'
         }} />
 
-        {/* Content */}
-        <div className="relative z-10 max-w-[800px] mx-auto px-4 lg:px-6 text-center flex flex-col items-center">
-          {/* Tagline */}
-          <div className={`mb-4 transition-all duration-700 ease-out ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            <div className="w-10 h-px bg-gold mx-auto mb-3"></div>
-            <span className="text-xs font-medium tracking-[0.2em] text-gold uppercase">
-              神经科技 x 脑机接口 x 认知科学
-            </span>
+        {/* Content - Two Column Layout */}
+        <div className="relative z-10 w-full max-w-[1280px] mx-auto px-4 lg:px-6 flex items-start gap-8 lg:gap-12 pt-28">
+          {/* Left: Brand Intro */}
+          <div className={`flex-1 max-w-[620px] transition-all duration-700 ease-out ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+            {/* Tagline */}
+            <div className="mb-5">
+              <div className="w-10 h-px bg-gold mb-3"></div>
+              <span className="text-xs font-medium tracking-[0.2em] text-white/70 uppercase">
+                神经科技 × 脑机接口 × 认知科学
+              </span>
+            </div>
+
+            {/* Title */}
+            <h1
+              className="font-serif text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white leading-[1.15] mb-5"
+              style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
+            >
+              探索认知边界
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base lg:text-lg text-white/75 max-w-[520px] mb-6 leading-relaxed">
+              在认知革命的前夜，追踪最前沿的脑科学，追问最深层的认知问题
+              ——在这个奇点时刻，理解人之所以为人的边界。
+            </p>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mb-8">
+              {['跨学科深度', '8年药企经验', '新中双视角'].map((tag) => (
+                <span key={tag} className="px-3 py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={() => navigate('/news')}
+                className="h-12 px-7 bg-burgundy hover:bg-burgundy-light text-white font-semibold text-sm rounded-full transition-all hover:scale-[1.02]"
+              >
+                浏览前沿资讯
+              </button>
+              <a
+                href="https://datasets.phineuro.life"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-12 px-7 bg-transparent border border-white/40 hover:border-white text-white font-medium text-sm rounded-full transition-all hover:bg-white/10 inline-flex items-center gap-2"
+              >
+                BCI训练数据集 <ExternalLink size={14} />
+              </a>
+            </div>
           </div>
 
-          {/* Title */}
-          <h1
-            className={`font-serif text-4xl md:text-5xl font-bold text-white leading-tight mb-4 transition-all duration-1000 ease-out delay-200 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.3)' }}
-          >
-            专注神经科技，探索认知边界
-          </h1>
+          {/* Right: 7×24H Intel Feed */}
+          <div className={`hidden lg:block w-[400px] flex-shrink-0 mt-8 transition-all duration-700 ease-out delay-300 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+            <div className="bg-charcoal/50 backdrop-blur-xl border border-white/10 rounded-2xl p-5" style={{ maxHeight: '420px' }}>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Zap size={16} className="text-gold" />
+                  <h3 className="text-sm font-bold text-white">7×24H 情报</h3>
+                  <span className="relative flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold/40 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-gold/20 items-center justify-center">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                    </span>
+                  </span>
+                </div>
+                <button onClick={() => navigate('/news')} className="text-xs text-gold hover:text-white transition-colors">查看更多 →</button>
+              </div>
+              <p className="text-[11px] text-white/50 mb-4">过去72小时累计聚合 <span className="text-gold font-semibold">128</span> 条产业情报</p>
 
-          {/* Subtitle */}
-          <p className={`text-base text-white/75 max-w-[560px] mb-8 leading-relaxed transition-all duration-700 ease-out delay-500 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            在认知革命的前夜，追踪最前沿的脑科学，追问最深层的认知问题
-            ——在这个奇点时刻，理解人之所以为人的边界。
-          </p>
+              {/* Date Header */}
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/10">
+                <Calendar size={12} className="text-white/40" />
+                <span className="text-xs text-white/60">
+                  {new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+                </span>
+              </div>
 
-          {/* CTAs */}
-          <div className={`flex flex-wrap items-center justify-center gap-4 transition-all duration-700 ease-out delay-700 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <button
-              onClick={() => navigate('/news')}
-              className="h-12 px-7 bg-gold hover:bg-gold-light text-charcoal font-semibold text-sm rounded-full transition-all hover:scale-[1.02]"
-            >
-              浏览前沿资讯
-            </button>
-            <button
-              onClick={() => navigate('/database')}
-              className="h-12 px-7 bg-transparent border border-white/40 hover:border-white text-white font-medium text-sm rounded-full transition-all hover:bg-white/10"
-            >
-              查看数据库
-            </button>
+              {/* Timeline */}
+              <div className="space-y-0 overflow-y-auto" style={{ maxHeight: '260px' }}>
+                {intelLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : intelFeeds.length === 0 ? (
+                  <p className="text-xs text-white/40 text-center py-8">暂无情报数据</p>
+                ) : (
+                  intelFeeds.map((feed, index) => (
+                    <a
+                      key={feed.id}
+                      href={`https://datasets.phineuro.life/intel/${feed.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex gap-3 group cursor-pointer hover:bg-white/5 rounded-lg p-2 -mx-2 transition-colors"
+                    >
+                      {/* Time dot line */}
+                      <div className="flex flex-col items-center pt-1">
+                        <div className={`w-2 h-2 rounded-full ${isWithin24h(feed.published_at) ? 'bg-gold' : 'bg-white/30'}`} />
+                        {index < intelFeeds.length - 1 && <div className="w-px flex-1 min-h-[24px] bg-white/10 mt-1" />}
+                      </div>
+                      {/* Content */}
+                      <div className="flex-1 pb-1">
+                        <span className="text-[11px] text-white/40 font-mono">{formatTime(feed.published_at)}</span>
+                        <p className="text-[13px] text-white/85 leading-snug mt-0.5 group-hover:text-gold transition-colors line-clamp-2">
+                          {feed.title}
+                        </p>
+                      </div>
+                    </a>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -152,7 +267,7 @@ export default function Home() {
                   {[
                     { label: '首页', active: true },
                     { label: '前沿资讯', path: '/news' },
-                    { label: '企业数据库', path: '/database' },
+                    { label: '企业数据库', path: 'https://datasets.phineuro.life', external: true },
                     { label: 'BCI报告', path: '/reports' },
                   ].map((item) => (
                     <button
@@ -187,7 +302,7 @@ export default function Home() {
               {/* Module Cards Section */}
               <div className="animate-in mb-10">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-6 bg-gold rounded-full"></div>
+                  <div className="w-1 h-6 bg-burgundy rounded-full"></div>
                   <h2 className="font-serif text-2xl font-bold text-burgundy">四大核心板块</h2>
                 </div>
 
@@ -205,7 +320,7 @@ export default function Home() {
                       政策动态、前沿论文、新闻报道，追踪神经科技最新资讯。
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-gold font-medium">实时更新</span>
+                      <span className="text-[11px] text-burgundy font-medium">实时更新</span>
                       <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
                         进入 <ArrowRight size={12} />
                       </span>
@@ -213,9 +328,11 @@ export default function Home() {
                   </button>
 
                   {/* Database Card */}
-                  <button
-                    onClick={() => navigate('/database')}
-                    className="group bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 p-5 border border-border-light hover:border-burgundy/20 text-left cursor-pointer relative"
+                  <a
+                    href="https://datasets.phineuro.life"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 p-5 border border-border-light hover:border-burgundy/20 text-left cursor-pointer relative block"
                   >
                     <div className="absolute top-3 right-3 px-2 py-0.5 text-[10px] bg-gold/20 text-gold-dark rounded-full font-semibold">
                       NEW
@@ -223,17 +340,17 @@ export default function Home() {
                     <div className="w-12 h-12 rounded-lg bg-burgundy/10 flex items-center justify-center mb-4 group-hover:bg-burgundy/20 transition-colors">
                       <Database size={24} className="text-burgundy" />
                     </div>
-                    <h4 className="text-sm font-semibold text-burgundy mb-2">企业数据库</h4>
+                    <h4 className="text-sm font-semibold text-burgundy mb-2">BCI 数据集</h4>
                     <p className="text-[12px] text-text-secondary line-clamp-2 mb-3 leading-relaxed">
-                      覆盖105+家中国神经科技企业，涵盖脑机接口、神经调控全链条。
+                      覆盖 25+ 核心 BCI 数据集，涵盖 EEG、ECoG、MEG 等多模态数据。
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-gold font-medium">105+ 企业</span>
+                      <span className="text-[11px] text-burgundy font-medium">25+ 数据集</span>
                       <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
                         进入 <ArrowRight size={12} />
                       </span>
                     </div>
-                  </button>
+                  </a>
 
                   {/* Reports Card */}
                   <button
@@ -251,7 +368,7 @@ export default function Home() {
                       脑机接口行业深度研究报告，涵盖市场分析、技术趋势、政策解读。
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-gold font-medium">限时免费</span>
+                      <span className="text-[11px] text-burgundy font-medium">限时免费</span>
                       <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
                         进入 <ArrowRight size={12} />
                       </span>
@@ -274,7 +391,7 @@ export default function Home() {
                       BCI技术路径解析、训练数据集、训练设备产品展示与购买。
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-gold font-medium">产品在售</span>
+                      <span className="text-[11px] text-burgundy font-medium">产品在售</span>
                       <span className="text-[12px] text-burgundy flex items-center gap-1 group-hover:gap-2 transition-all">
                         进入 <ArrowRight size={12} />
                       </span>
@@ -287,7 +404,7 @@ export default function Home() {
               <div className="animate-in">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-1 h-6 bg-gold rounded-full"></div>
+                    <div className="w-1 h-6 bg-burgundy rounded-full"></div>
                     <h2 className="font-serif text-2xl font-bold text-burgundy">精选资讯</h2>
                   </div>
                   <button
@@ -304,7 +421,7 @@ export default function Home() {
                       key={item.id}
                       onClick={() => navigate('/news')}
                       className={`animate-in flex gap-4 bg-white rounded-lg border transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 group cursor-pointer ${
-                        item.featured ? 'border-l-[3px] border-l-gold border-border-light' : 'border-border-light hover:border-l-[3px] hover:border-l-gold'
+                        item.featured ? 'border-l-[3px] border-l-burgundy border-border-light' : 'border-border-light hover:border-l-[3px] hover:border-l-burgundy'
                       }`}
                     >
                       {/* Image Placeholder */}
@@ -410,20 +527,22 @@ export default function Home() {
                   <div className="space-y-2">
                     {[
                       { label: '前沿资讯', path: '/news', desc: '政策·论文·新闻实时追踪' },
-                      { label: '企业数据库', path: '/database', desc: '105+神经科技企业' },
+                      { label: 'BCI 数据集', path: 'https://datasets.phineuro.life', desc: '25+核心BCI数据集', external: true },
                       { label: 'BCI行业报告', path: '/reports', desc: '市场分析·技术趋势' },
                     ].map((link) => (
-                      <button
+                      <a
                         key={link.label}
-                        onClick={() => navigate(link.path)}
-                        className="w-full text-left bg-white rounded-lg border border-border-light p-3 hover:shadow-card hover:border-burgundy/20 transition-all group"
+                        href={link.path}
+                        target={link.external ? '_blank' : undefined}
+                        rel={link.external ? 'noopener noreferrer' : undefined}
+                        className="w-full text-left bg-white rounded-lg border border-border-light p-3 hover:shadow-card hover:border-burgundy/20 transition-all group block"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-burgundy">{link.label}</span>
                           <ArrowRight size={12} className="text-slate-blue group-hover:text-burgundy group-hover:translate-x-1 transition-all" />
                         </div>
                         <p className="text-[11px] text-text-secondary mt-0.5">{link.desc}</p>
-                      </button>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -466,9 +585,9 @@ export default function Home() {
             <input
               type="email"
               placeholder="输入您的邮箱地址"
-              className="h-12 w-full sm:w-[360px] px-5 rounded-full bg-white/10 border border-white/30 text-white placeholder:text-white/50 text-sm outline-none focus:border-gold transition-all focus:shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+              className="h-12 w-full sm:w-[360px] px-5 rounded-full bg-white/10 border border-white/30 text-white placeholder:text-white/50 text-sm outline-none focus:border-gold transition-all focus:shadow-[0_0_20px_rgba(114,47,55,0.3)]"
             />
-            <button className="h-12 px-7 bg-gold hover:bg-gold-light text-charcoal font-semibold text-sm rounded-full transition-all hover:scale-[1.02] whitespace-nowrap">
+            <button className="h-12 px-7 bg-burgundy hover:bg-burgundy-light text-white font-semibold text-sm rounded-full transition-all hover:scale-[1.02] whitespace-nowrap">
               立即订阅
             </button>
           </div>
@@ -508,16 +627,27 @@ export default function Home() {
                 {[
                   { label: '首页', path: '/' },
                   { label: '前沿资讯', path: '/news' },
-                  { label: '企业数据库', path: '/database' },
+                  { label: 'BCI 数据集', path: 'https://datasets.phineuro.life', external: true },
                   { label: 'BCI行业报告', path: '/reports' },
                 ].map((link) => (
                   <li key={link.label}>
-                    <button
-                      onClick={() => navigate(link.path)}
-                      className="text-[13px] text-white/60 hover:text-gold transition-colors"
-                    >
-                      {link.label}
-                    </button>
+                    {link.external ? (
+                      <a
+                        href={link.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[13px] text-white/60 hover:text-gold transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => navigate(link.path)}
+                        className="text-[13px] text-white/60 hover:text-gold transition-colors"
+                      >
+                        {link.label}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>

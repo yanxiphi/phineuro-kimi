@@ -1,17 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Menu, X, Brain, Database, FileText, Home, Radio, Cpu } from 'lucide-react';
+import { Menu, X, Brain, Database, FileText, Home, Radio, Cpu, ExternalLink, ChevronDown, Globe, Server } from 'lucide-react';
 
 interface NavLink {
   label: string;
   path: string;
   icon: React.ElementType;
+  external?: boolean;
 }
 
-const navLinks: NavLink[] = [
+interface DropdownItem {
+  label: string;
+  path: string;
+  icon: React.ElementType;
+  external?: boolean;
+  desc?: string;
+}
+
+const navLinks: (NavLink | { label: string; icon: React.ElementType; dropdown: DropdownItem[] })[] = [
   { label: '首页', path: '/', icon: Home },
   { label: '前沿资讯', path: '/news', icon: Radio },
-  { label: '数据库', path: '/database', icon: Database },
+  {
+    label: '数据库',
+    icon: Database,
+    dropdown: [
+      { label: '全球企业数据库', path: '/database', icon: Globe, desc: '105+ 神经科技企业全景' },
+      { label: 'BCI 训练数据集', path: 'https://datasets.phineuro.life', icon: Server, external: true, desc: '25+ 核心 BCI 数据集' },
+    ],
+  },
   { label: '报告', path: '/reports', icon: FileText },
   { label: '技术路径', path: '/tech-routes', icon: Cpu },
 ];
@@ -19,6 +35,8 @@ const navLinks: NavLink[] = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -31,18 +49,37 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Close mobile menu on route change
     setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
   }, [location.pathname]);
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleNavigate = (path: string, external?: boolean) => {
+    if (external) {
+      window.open(path, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(path);
+    }
     setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
   };
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
+  };
+
+  const isDropdownActive = (items: DropdownItem[]) => {
+    return items.some((item) => !item.external && isActive(item.path));
   };
 
   return (
@@ -57,12 +94,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <button
-            onClick={() => handleNavigate('/')}
+            onClick={() => navigate('/')}
             className="flex items-center gap-2.5 group"
           >
             <div className="relative">
               <Brain className="w-8 h-8 text-burgundy transition-colors duration-300" />
-              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-gold rounded-full animate-pulse" />
+              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-burgundy-light rounded-full animate-pulse" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-serif text-xl font-bold tracking-tight text-burgundy transition-colors duration-300">
@@ -75,17 +112,69 @@ export default function Navbar() {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1" ref={dropdownRef}>
             {navLinks.map((link) => {
-              const active = isActive(link.path);
-              const isDatabase = link.path === '/database';
+              if ('dropdown' in link) {
+                const active = isDropdownActive(link.dropdown);
+                return (
+                  <div
+                    key={link.label}
+                    className="relative"
+                    onMouseEnter={() => setOpenDropdown(link.label)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
+                    <button
+                      className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                        active
+                          ? 'text-burgundy bg-burgundy/10'
+                          : 'text-slate-blue hover:text-burgundy hover:bg-burgundy/5'
+                      }`}
+                    >
+                      <link.icon className="w-3.5 h-3.5" />
+                      {link.label}
+                      <ChevronDown className={`w-3 h-3 transition-transform ${openDropdown === link.label ? 'rotate-180' : ''}`} />
+                    </button>
+                    {/* Dropdown */}
+                    <div
+                      className={`absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-elevated border border-border-light overflow-hidden transition-all duration-200 ${
+                        openDropdown === link.label
+                          ? 'opacity-100 translate-y-0 pointer-events-auto'
+                          : 'opacity-0 -translate-y-2 pointer-events-none'
+                      }`}
+                    >
+                      {link.dropdown.map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => handleNavigate(item.path, item.external)}
+                          className="w-full text-left px-4 py-3 hover:bg-burgundy/[0.04] transition-colors flex items-start gap-3 group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-burgundy/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-burgundy/20 transition-colors">
+                            <item.icon className="w-4 h-4 text-burgundy" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-medium text-text-primary group-hover:text-burgundy transition-colors">
+                                {item.label}
+                              </span>
+                              {item.external && <ExternalLink className="w-3 h-3 text-slate-blue/40" />}
+                            </div>
+                            <p className="text-[11px] text-slate-blue/60 mt-0.5">{item.desc}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              const active = !link.external && isActive(link.path);
               const isReports = link.path === '/reports';
               const Icon = link.icon;
 
               return (
                 <button
                   key={link.path}
-                  onClick={() => handleNavigate(link.path)}
+                  onClick={() => handleNavigate(link.path, link.external)}
                   className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                     active
                       ? 'text-burgundy bg-burgundy/10'
@@ -95,8 +184,9 @@ export default function Navbar() {
                   <span className="flex items-center gap-1.5">
                     <Icon className="w-3.5 h-3.5" />
                     {link.label}
-                    {(isDatabase || isReports) && !active && (
-                      <span className="w-1.5 h-1.5 bg-gold rounded-full" />
+                    {link.external && <ExternalLink className="w-3 h-3 opacity-60" />}
+                    {isReports && !active && (
+                      <span className="w-1.5 h-1.5 bg-burgundy-light rounded-full" />
                     )}
                   </span>
                   {active && (
@@ -132,15 +222,50 @@ export default function Navbar() {
       >
         <div className="px-4 py-4 space-y-1">
           {navLinks.map((link) => {
-            const active = isActive(link.path);
-            const isDatabase = link.path === '/database';
+            if ('dropdown' in link) {
+              const active = isDropdownActive(link.dropdown);
+              const isOpen = openDropdown === link.label;
+              return (
+                <div key={link.label}>
+                  <button
+                    onClick={() => setOpenDropdown(isOpen ? null : link.label)}
+                    className={`w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      active
+                        ? 'text-burgundy bg-burgundy/10'
+                        : 'text-slate-blue hover:text-burgundy hover:bg-burgundy/5'
+                    }`}
+                  >
+                    <link.icon className="w-4 h-4" />
+                    {link.label}
+                    <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {link.dropdown.map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => handleNavigate(item.path, item.external)}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm text-slate-blue hover:text-burgundy hover:bg-burgundy/5 transition-all"
+                        >
+                          <item.icon className="w-4 h-4" />
+                          {item.label}
+                          {item.external && <ExternalLink className="w-3 h-3 opacity-60 ml-auto" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            const active = !link.external && isActive(link.path);
             const isReports = link.path === '/reports';
             const Icon = link.icon;
 
             return (
               <button
                 key={link.path}
-                onClick={() => handleNavigate(link.path)}
+                onClick={() => handleNavigate(link.path, link.external)}
                 className={`w-full flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
                     ? 'text-burgundy bg-burgundy/10'
@@ -149,8 +274,9 @@ export default function Navbar() {
               >
                 <Icon className="w-4 h-4" />
                 {link.label}
-                {(isDatabase || isReports) && (
-                  <span className="ml-auto px-2 py-0.5 text-[10px] bg-gold/20 text-gold-dark rounded-full font-semibold">
+                {link.external && <ExternalLink className="w-3 h-3 opacity-60 ml-auto" />}
+                {isReports && (
+                  <span className="ml-auto px-2 py-0.5 text-[10px] bg-burgundy/20 text-burgundy rounded-full font-semibold">
                     NEW
                   </span>
                 )}

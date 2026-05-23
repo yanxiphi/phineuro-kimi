@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Radio, ArrowLeft, Landmark, FileText, Newspaper,
-  Calendar, ExternalLink, Tag, Clock
+  Calendar, ExternalLink, Tag, Clock, Zap, Activity
 } from 'lucide-react';
 
-type NewsCategory = 'policy' | 'papers' | 'news';
+type NewsCategory = 'policy' | 'papers' | 'news' | 'intel';
 
 interface NewsItem {
   id: number;
@@ -16,6 +16,16 @@ interface NewsItem {
   tags: string[];
   url?: string;
   isHot?: boolean;
+}
+
+interface IntelFeed {
+  id: string;
+  title: string;
+  summary: string;
+  url: string;
+  source_name: string;
+  published_at: string;
+  category: string;
 }
 
 const policyData: NewsItem[] = [
@@ -172,12 +182,64 @@ const tabs = [
   { key: 'policy' as NewsCategory, label: '政策', icon: Landmark, data: policyData },
   { key: 'papers' as NewsCategory, label: '前沿论文', icon: FileText, data: papersData },
   { key: 'news' as NewsCategory, label: '新闻报道', icon: Newspaper, data: newsData },
+  { key: 'intel' as NewsCategory, label: '7×24H 情报', icon: Zap, data: [] as NewsItem[] },
 ];
+
+function formatTime(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+}
 
 export default function NewsPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<NewsCategory>('policy');
+  const [intelFeeds, setIntelFeeds] = useState<IntelFeed[]>([]);
+  const [intelLoading, setIntelLoading] = useState(false);
+
   const currentTab = tabs.find(t => t.key === activeTab)!;
+
+  useEffect(() => {
+    if (activeTab === 'intel') {
+      setIntelLoading(true);
+      fetch('https://datasets.phineuro.life/api/intel?limit=20')
+        .then((res) => res.json())
+        .then((data) => {
+          setIntelFeeds(data.data || []);
+          setIntelLoading(false);
+        })
+        .catch(() => {
+          setIntelFeeds([]);
+          setIntelLoading(false);
+        });
+    }
+  }, [activeTab]);
+
+  const getCategoryLabel = (cat: string) => {
+    const labels: Record<string, string> = {
+      '融资': '融资', '临床': '临床', '政策': '政策',
+      '技术突破': '技术突破', '产品发布': '产品发布',
+      '产业动态': '产业动态', '学术': '学术',
+    };
+    return labels[cat] || cat;
+  };
+
+  const getCategoryColor = (cat: string) => {
+    const colors: Record<string, string> = {
+      '融资': 'bg-green-50 text-green-700',
+      '临床': 'bg-blue-50 text-blue-700',
+      '政策': 'bg-amber-50 text-amber-700',
+      '技术突破': 'bg-purple-50 text-purple-700',
+      '产品发布': 'bg-pink-50 text-pink-700',
+      '产业动态': 'bg-slate-50 text-slate-700',
+      '学术': 'bg-burgundy/[0.08] text-burgundy',
+    };
+    return colors[cat] || 'bg-gray-50 text-gray-700';
+  };
 
   return (
     <div className="min-h-screen bg-cream pt-24 pb-16">
@@ -200,17 +262,18 @@ export default function NewsPage() {
               前沿资讯
             </h1>
             <p className="text-slate-blue/70 max-w-2xl mx-auto">
-              追踪神经科技领域最新政策动态、学术论文与行业新闻
+              追踪神经科技领域最新政策动态、学术论文、行业新闻与实时情报
             </p>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-4 gap-4 mb-10">
           {[
             { label: '政策动态', value: policyData.length, icon: Landmark },
             { label: '前沿论文', value: papersData.length, icon: FileText },
             { label: '行业新闻', value: newsData.length, icon: Newspaper },
+            { label: '实时情报', value: '24H', icon: Activity },
           ].map((stat) => (
             <div key={stat.label} className="text-center p-5 rounded-2xl border border-burgundy/10 bg-white shadow-card">
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-burgundy/10 mb-3">
@@ -244,59 +307,120 @@ export default function NewsPage() {
         </div>
 
         {/* Content */}
-        <div className="space-y-4">
-          {currentTab.data.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => {
-                const targetUrl = item.url || `https://www.baidu.com/s?wd=${encodeURIComponent(item.title)}`;
-                window.open(targetUrl, '_blank', 'noopener,noreferrer');
-              }}
-              className="bg-white rounded-xl border border-border-light p-5 hover:shadow-card-hover transition-all duration-300 group cursor-pointer"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    {item.isHot && (
-                      <span className="px-2 py-0.5 text-[10px] bg-gold/20 text-gold-dark rounded-full font-semibold">
-                        HOT
+        {activeTab === 'intel' ? (
+          <div>
+            {intelLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                <span className="ml-3 text-slate-blue/60">加载情报数据中...</span>
+              </div>
+            ) : intelFeeds.length === 0 ? (
+              <div className="text-center py-16 text-slate-blue/50">
+                <Zap className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                <p>暂无情报数据</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {intelFeeds.map((feed) => (
+                  <a
+                    key={feed.id}
+                    href={feed.url || `https://datasets.phineuro.life/intel/${feed.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-white rounded-xl border border-border-light p-5 hover:shadow-card-hover transition-all duration-300 group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                          <span className={`px-2 py-0.5 text-[10px] rounded-full font-semibold ${getCategoryColor(feed.category)}`}>
+                            {getCategoryLabel(feed.category)}
+                          </span>
+                          <span className="text-[11px] text-slate-blue/60">
+                            来源：{feed.source_name || '未知'}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burgundy transition-colors">
+                          {feed.title}
+                        </h3>
+                        <p className="text-sm text-text-secondary leading-relaxed mb-3">
+                          {feed.summary}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-slate-blue">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {formatDate(feed.published_at)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {formatTime(feed.published_at)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm group-hover:bg-burgundy group-hover:text-white transition-all">
+                        <ExternalLink className="w-4 h-4" />
+                        <span className="hidden sm:inline">查看</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {currentTab.data.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  const targetUrl = item.url || `https://www.baidu.com/s?wd=${encodeURIComponent(item.title)}`;
+                  window.open(targetUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className="bg-white rounded-xl border border-border-light p-5 hover:shadow-card-hover transition-all duration-300 group cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      {item.isHot && (
+                        <span className="px-2 py-0.5 text-[10px] bg-gold/20 text-gold-dark rounded-full font-semibold">
+                          HOT
+                        </span>
+                      )}
+                      {item.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] bg-burgundy/[0.06] text-burgundy rounded-full"
+                        >
+                          <Tag className="w-3 h-3" />
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burgundy transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-text-secondary leading-relaxed mb-3">
+                      {item.summary}
+                    </p>
+                    <div className="flex items-center gap-4 text-xs text-slate-blue">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {item.date}
                       </span>
-                    )}
-                    {item.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] bg-burgundy/[0.06] text-burgundy rounded-full"
-                      >
-                        <Tag className="w-3 h-3" />
-                        {tag}
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        来源：{item.source}
                       </span>
-                    ))}
+                    </div>
                   </div>
-                  <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burgundy transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-text-secondary leading-relaxed mb-3">
-                    {item.summary}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-slate-blue">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {item.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      来源：{item.source}
-                    </span>
+                  <div className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm group-hover:bg-burgundy group-hover:text-white transition-all">
+                    <ExternalLink className="w-4 h-4" />
+                    <span className="hidden sm:inline">查看来源</span>
                   </div>
-                </div>
-                <div className="flex-shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-burgundy/10 text-burgundy text-sm group-hover:bg-burgundy group-hover:text-white transition-all">
-                  <ExternalLink className="w-4 h-4" />
-                  <span className="hidden sm:inline">查看来源</span>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Footer Note */}
         <div className="mt-8 text-center text-sm text-slate-blue/50">

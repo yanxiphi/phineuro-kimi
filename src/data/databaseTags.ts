@@ -159,55 +159,55 @@ export const TAG_DIMENSIONS: TagDimension[] = [
     ),
   },
   {
-    id: 'diseaseArea',
-    name: '疾病领域',
-    color: '#27AE60',
-    description: 'D3: 按疾病检索企业',
-    tags: DISEASE_CATEGORIES.flatMap(d =>
-      d.indications.map(ind => ({ value: ind, color: d.color }))
-    ),
-  },
-  {
     id: 'clinicalStage',
     name: '临床阶段',
     color: '#F39C12',
-    description: 'D4: 判断产品研发进度',
+    description: 'D3: 判断产品研发进度',
     tags: CLINICAL_STAGES.map(t => ({ value: t.value, color: t.color })),
   },
   {
     id: 'regulatoryStatus',
     name: '监管状态',
     color: '#8E44AD',
-    description: 'D5: 追踪注册审批进展',
+    description: 'D4: 追踪注册审批进展',
     tags: REGULATORY_STATUS.map(t => ({ value: t.value, color: t.color })),
   },
   {
     id: 'productForm',
     name: '产品形态',
     color: '#16A085',
-    description: 'D6: 区分交付形式',
+    description: 'D5: 区分交付形式',
     tags: PRODUCT_FORMS.map(t => ({ value: t.value, color: t.color })),
   },
   {
     id: 'businessModel',
     name: '商业模式',
     color: '#2980B9',
-    description: 'D7: 识别目标客户和收入模式',
+    description: 'D6: 识别目标客户和收入模式',
     tags: BUSINESS_MODELS.map(t => ({ value: t.value, color: t.color })),
   },
   {
     id: 'fundingStage',
     name: '融资阶段',
     color: '#D35400',
-    description: 'D8: 评估企业发展阶段',
+    description: 'D7: 评估企业发展阶段',
     tags: FUNDING_STAGES.map(t => ({ value: t.value, color: t.color })),
   },
   {
     id: 'crossInnovation',
     name: '交叉创新',
     color: '#C0392B',
-    description: 'D9: 标识跨界融合能力',
+    description: 'D8: 标识跨界融合能力',
     tags: CROSS_INNOVATION.map(t => ({ value: t.value, color: t.color })),
+  },
+  {
+    id: 'diseaseArea',
+    name: '疾病领域',
+    color: '#27AE60',
+    description: 'D9: 按疾病检索企业',
+    tags: DISEASE_CATEGORIES.flatMap(d =>
+      d.indications.map(ind => ({ value: ind, color: d.color }))
+    ),
   },
 ];
 

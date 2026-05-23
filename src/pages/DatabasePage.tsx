@@ -33,8 +33,8 @@ interface ActiveFilters {
 }
 
 const ALL_DIMENSION_KEYS: (keyof ActiveFilters)[] = [
-  'techRoute', 'chainPosition', 'diseaseArea', 'clinicalStage',
-  'regulatoryStatus', 'productForm', 'businessModel', 'fundingStage', 'crossInnovation',
+  'techRoute', 'chainPosition', 'clinicalStage',
+  'regulatoryStatus', 'productForm', 'businessModel', 'fundingStage', 'crossInnovation', 'diseaseArea',
 ];
 
 const INITIAL_FILTERS: ActiveFilters = {
@@ -116,6 +116,7 @@ function Shield(props: any) {
 function CompanyCard({ company, expanded, onToggle }: {
   company: Company; expanded: boolean; onToggle: () => void;
 }) {
+  const navigate = useNavigate();
   const techColor = getTechRouteColor(company.techRoute);
   const tags: { label: string; color: string; dim: string }[] = [];
 
@@ -132,7 +133,10 @@ function CompanyCard({ company, expanded, onToggle }: {
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold text-foreground truncate">{company.name}</span>
+              <span
+                onClick={(e) => { e.stopPropagation(); navigate(`/company/${company.id}`); }}
+                className="font-semibold text-foreground truncate cursor-pointer hover:text-burgundy transition-colors"
+              >{company.name}</span>
               <span className="text-xs text-slate-blue/50 truncate">{company.nameEn}</span>
             </div>
             <div className="flex flex-wrap gap-1.5 mb-2">
@@ -246,6 +250,7 @@ function DetailItem({ label, value }: { label: string; value?: string | null }) 
 function CompanyTable({ companies, expandedId, onToggle }: {
   companies: Company[]; expandedId: number | null; onToggle: (id: number) => void;
 }) {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-card">
       <div className="overflow-x-auto">
@@ -271,7 +276,10 @@ function CompanyTable({ companies, expandedId, onToggle }: {
                   onClick={() => onToggle(company.id)}>
                   <td className="px-3 py-2.5 text-slate-blue/50">{company.id}</td>
                   <td className="px-3 py-2.5">
-                    <div className="font-medium text-foreground">{company.name}</div>
+                    <div
+                      onClick={(e) => { e.stopPropagation(); navigate(`/company/${company.id}`); }}
+                      className="font-medium text-foreground cursor-pointer hover:text-burgundy transition-colors"
+                    >{company.name}</div>
                     <div className="text-xs text-slate-blue/40">{company.nameEn}</div>
                   </td>
                   <td className="px-3 py-2.5">
@@ -360,7 +368,7 @@ function CompanyTable({ companies, expandedId, onToggle }: {
 function TagFilterPanel({ filters, onChange, onClear }: {
   filters: ActiveFilters; onChange: (f: ActiveFilters) => void; onClear: () => void;
 }) {
-  const [expandedDims, setExpandedDims] = useState<Set<string>>(new Set(['techRoute', 'diseaseArea']));
+  const [expandedDims, setExpandedDims] = useState<Set<string>>(new Set(['techRoute']));
 
   const toggleDim = (id: string) => {
     setExpandedDims(prev => {
@@ -523,6 +531,7 @@ function DiseaseView({ companies, onSelectIndication }: {
 // ============================================
 
 function ChainView({ companies }: { companies: Company[] }) {
+  const navigate = useNavigate();
   const [selectedRoute, setSelectedRoute] = useState<string>(TECH_ROUTES[0].value);
 
   const levels = ['上游', '中游', '下游'] as const;
@@ -581,7 +590,11 @@ function ChainView({ companies }: { companies: Company[] }) {
                     <h4 className="text-xs font-semibold text-slate-blue/70 uppercase tracking-wider mb-2">{sub}</h4>
                     <div className="flex flex-wrap gap-2">
                       {comps.map(c => (
-                        <span key={c.id} className="px-3 py-1.5 rounded-lg text-sm bg-gray-50 text-foreground border border-gray-100 hover:border-burgundy/30 hover:bg-burgundy/5 transition-colors cursor-default">
+                        <span
+                          key={c.id}
+                          onClick={() => navigate(`/company/${c.id}`)}
+                          className="px-3 py-1.5 rounded-lg text-sm bg-gray-50 text-foreground border border-gray-100 hover:border-burgundy/30 hover:bg-burgundy/5 hover:text-burgundy transition-colors cursor-pointer"
+                        >
                           {c.name}
                         </span>
                       ))}
@@ -661,17 +674,9 @@ export default function DatabasePage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(true);
   const [listViewMode, setListViewMode] = useState<'card' | 'table'>('table');
+  const [countryFilter, setCountryFilter] = useState<'global' | 'china' | 'usa' | 'others'>('global');
 
-  // 统计数据
-  const stats = useMemo(() => {
-    const total = companiesData.length;
-    const invasive = companiesData.filter(c => c.techRoute?.includes('侵入式')).length;
-    const nonInvasive = companiesData.filter(c => c.techRoute?.includes('非侵入式')).length;
-    const listed = companiesData.filter(c => c.type?.includes('上市')).length;
-    return { total, invasive, nonInvasive, listed };
-  }, []);
-
-  // 搜索+标签过滤
+  // 搜索+标签过滤+国家筛选
   const filteredCompanies = useMemo(() => {
     return companiesData.filter(c => {
       const matchesSearch = !searchQuery ||
@@ -680,9 +685,22 @@ export default function DatabasePage() {
         c.founder?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.segment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.location?.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch && companyMatchesFilters(c, filters);
+      const matchesCountry = countryFilter === 'global' ||
+        (countryFilter === 'china' && c.country === '中国') ||
+        (countryFilter === 'usa' && c.country === '美国') ||
+        (countryFilter === 'others' && c.country !== '中国' && c.country !== '美国');
+      return matchesSearch && matchesCountry && companyMatchesFilters(c, filters);
     });
-  }, [searchQuery, filters]);
+  }, [searchQuery, filters, countryFilter]);
+
+  // 统计数据（基于当前筛选结果）
+  const stats = useMemo(() => {
+    const total = filteredCompanies.length;
+    const invasive = filteredCompanies.filter(c => c.techRoute?.includes('侵入式')).length;
+    const nonInvasive = filteredCompanies.filter(c => c.techRoute?.includes('非侵入式')).length;
+    const listed = filteredCompanies.filter(c => c.type?.includes('上市')).length;
+    return { total, invasive, nonInvasive, listed };
+  }, [filteredCompanies]);
 
   // 选择适应症 -> 切换到列表视图并应用筛选
   const handleSelectIndication = useCallback((indication: string) => {
@@ -695,9 +713,9 @@ export default function DatabasePage() {
   const hasActiveFilters = searchQuery || filterCount > 0;
 
   const viewButtons: { mode: ViewMode; label: string; icon: any }[] = [
-    { mode: 'disease', label: '疾病分类', icon: Stethoscope },
     { mode: 'chain', label: '产业链', icon: Layers },
     { mode: 'list', label: '企业列表', icon: Grid3X3 },
+    { mode: 'disease', label: '疾病分类', icon: Stethoscope },
     { mode: 'tags', label: '标签云', icon: Tag },
   ];
 
@@ -715,7 +733,7 @@ export default function DatabasePage() {
               <span>PhiNeuro 独家数据库</span>
             </div>
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-burgundy mb-3">
-              中国神经科技企业数据库
+              全球神经科技企业数据库
             </h1>
             <p className="text-slate-blue max-w-2xl mx-auto">
               全球首个以<span className="font-semibold text-burgundy">疾病为核心维度</span>、以
@@ -740,6 +758,28 @@ export default function DatabasePage() {
               <div className="font-mono text-2xl font-bold mb-0.5" style={{ color: s.color }}>{s.value}</div>
               <p className="text-slate-blue/60 text-xs">{s.label}</p>
             </div>
+          ))}
+        </div>
+
+        {/* Country Filter */}
+        <div className="flex items-center justify-center gap-2 mb-6">
+          {[
+            { key: 'global' as const, label: '全球' },
+            { key: 'china' as const, label: '中国' },
+            { key: 'usa' as const, label: '美国' },
+            { key: 'others' as const, label: '其它' },
+          ].map((btn) => (
+            <button
+              key={btn.key}
+              onClick={() => setCountryFilter(btn.key)}
+              className={`px-5 py-2 rounded-xl text-sm font-medium transition-all ${
+                countryFilter === btn.key
+                  ? 'bg-burgundy text-white shadow-card'
+                  : 'bg-white text-slate-blue border border-gray-200 hover:border-burgundy/30 hover:text-burgundy'
+              }`}
+            >
+              {btn.label}
+            </button>
           ))}
         </div>
 
