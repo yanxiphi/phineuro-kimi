@@ -686,9 +686,9 @@ export default function DatabasePage() {
         c.segment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.location?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCountry = countryFilter === 'global' ||
-        (countryFilter === 'china' && c.country === '中国') ||
+        (countryFilter === 'china' && (c.country === '中国' || !c.country)) ||
         (countryFilter === 'usa' && c.country === '美国') ||
-        (countryFilter === 'others' && c.country !== '中国' && c.country !== '美国');
+        (countryFilter === 'others' && c.country && c.country !== '中国' && c.country !== '美国');
       return matchesSearch && matchesCountry && companyMatchesFilters(c, filters);
     });
   }, [searchQuery, filters, countryFilter]);
