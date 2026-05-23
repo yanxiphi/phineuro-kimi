@@ -1,0 +1,22 @@
+name: Intel Crawler (Phase 1)
+
+on:
+  schedule:
+    # 每2小时运行一次 (UTC)
+    - cron: '0 */2 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Intel Fetch API
+        run: |
+          curl -X POST \
+            "https://datasets.phineuro.life/api/cron/fetch-intel" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\nHTTP Status: %{http_code}\n" \
+            -s
+      - name: Log completion
+        run: echo "Intel crawl triggered at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
