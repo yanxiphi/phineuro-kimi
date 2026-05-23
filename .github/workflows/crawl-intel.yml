@@ -14,7 +14,7 @@ jobs:
         run: |
           curl -X POST \
             "https://datasets.phineuro.life/api/cron/fetch-intel" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer ${{ secrets.News_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n" \
             -s
