@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { Menu, X, Brain, Database, FileText, Home, Radio, Cpu, ExternalLink, ChevronDown, Globe, Server } from 'lucide-react';
+import { Menu, X, Brain, Database, FileText, Home, Radio, Cpu, ExternalLink, ChevronDown, Globe, Server, User, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface NavLink {
   label: string;
@@ -31,6 +32,45 @@ const navLinks: (NavLink | { label: string; icon: React.ElementType; dropdown: D
   { label: '报告', path: '/reports', icon: FileText },
   { label: '技术路径', path: '/tech-routes', icon: Cpu },
 ];
+
+function DesktopAuthButton() {
+  const { user, isLoggedIn, showLogin, logout } = useAuth();
+
+  if (isLoggedIn && user) {
+    return (
+      <div className="hidden lg:flex items-center gap-2 ml-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-burgundy/10 text-burgundy text-sm">
+          <User className="w-4 h-4" />
+          <span className="max-w-[80px] truncate">{user.name}</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+            user.tier === 'pro' ? 'bg-amber-100 text-amber-700' :
+            user.tier === 'registered' ? 'bg-green-100 text-green-700' :
+            'bg-gray-100 text-gray-500'
+          }`}>
+            {user.tier === 'pro' ? '专业' : user.tier === 'registered' ? '试用' : '基础'}
+          </span>
+        </div>
+        <button
+          onClick={logout}
+          className="p-1.5 rounded-lg text-slate-blue/50 hover:text-burgundy hover:bg-burgundy/5 transition-colors"
+          title="退出登录"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={showLogin}
+      className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-burgundy bg-burgundy/10 hover:bg-burgundy hover:text-white transition-all ml-2"
+    >
+      <User className="w-4 h-4" />
+      登录
+    </button>
+  );
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -196,6 +236,9 @@ export default function Navbar() {
               );
             })}
           </div>
+
+          {/* Auth Button */}
+          <DesktopAuthButton />
 
           {/* Mobile Menu Button */}
           <button

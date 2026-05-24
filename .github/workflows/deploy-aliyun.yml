@@ -1,0 +1,47 @@
+name: Deploy to Aliyun ECS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: '20260520_3个模块增加/package-lock.json'
+
+      - name: Install & Build
+        run: |
+          cd 20260520_3个模块增加
+          npm ci
+          npm run build
+
+      - name: Deploy to Aliyun ECS (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USER }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          source: "20260520_3个模块增加/dist/*"
+          target: "/var/www/phineuro/"
+          strip_components: 2
+          rm: true
+
+      - name: Reload Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USER }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          script: |
+            sudo nginx -t && sudo nginx -s reload
+            echo "Deployment completed at $(date)"
