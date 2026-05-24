@@ -4,7 +4,8 @@ export type UserTier = 'guest' | 'registered' | 'registered_expired' | 'pro';
 
 export interface User {
   id: number;
-  phone: string;
+  phone?: string;
+  email?: string;
   name: string;
   avatar?: string;
   role: string;

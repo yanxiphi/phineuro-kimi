@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { X, Phone, Lock, Loader2 } from 'lucide-react';
+import { X, Phone, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+
+type LoginMode = 'phone' | 'email';
 
 export default function LoginModal() {
   const { isLoginOpen, hideLogin, login } = useAuth();
+  const [mode, setMode] = useState<LoginMode>('phone');
+
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [countdown, setCountdown] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -13,15 +18,23 @@ export default function LoginModal() {
   if (!isLoginOpen) return null;
 
   const isValidPhone = /^1[3-9]\d{9}$/.test(phone);
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidInput = mode === 'phone' ? isValidPhone : isValidEmail;
 
   const sendCode = async () => {
-    if (!isValidPhone || countdown > 0) return;
+    if (!isValidInput || countdown > 0) return;
     setError('');
+
+    const endpoint = mode === 'phone'
+      ? 'https://datasets.phineuro.life/api/auth/sms-send'
+      : 'https://datasets.phineuro.life/api/auth/email-send';
+    const body = mode === 'phone' ? { phone } : { email };
+
     try {
-      const resp = await fetch('https://datasets.phineuro.life/api/auth/sms-send', {
+      const resp = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify(body),
       });
       const data = await resp.json();
       if (data.success) {
@@ -41,14 +54,20 @@ export default function LoginModal() {
   };
 
   const submit = async () => {
-    if (!isValidPhone || code.length !== 6) return;
+    if (!isValidInput || code.length !== 6) return;
     setLoading(true);
     setError('');
+
+    const endpoint = mode === 'phone'
+      ? 'https://datasets.phineuro.life/api/auth/sms-verify'
+      : 'https://datasets.phineuro.life/api/auth/email-verify';
+    const body = mode === 'phone' ? { phone, code } : { email, code };
+
     try {
-      const resp = await fetch('https://datasets.phineuro.life/api/auth/sms-verify', {
+      const resp = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, code }),
+        body: JSON.stringify(body),
       });
       const data = await resp.json();
       if (data.success) {
@@ -79,16 +98,52 @@ export default function LoginModal() {
 
         {/* Body */}
         <div className="px-6 py-6 space-y-4">
-          {/* Phone */}
+          {/* Mode Tabs */}
+          <div className="flex p-1 bg-gray-100 rounded-xl">
+            <button
+              onClick={() => { setMode('phone'); setError(''); setCode(''); }}
+              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                mode === 'phone'
+                  ? 'bg-white text-burgundy shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              手机验证码
+            </button>
+            <button
+              onClick={() => { setMode('email'); setError(''); setCode(''); }}
+              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
+                mode === 'email'
+                  ? 'bg-white text-burgundy shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              邮箱验证码
+            </button>
+          </div>
+
+          {/* Input: Phone or Email */}
           <div>
-            <label className="block text-sm text-slate-blue mb-1.5">手机号</label>
+            <label className="block text-sm text-slate-blue mb-1.5">
+              {mode === 'phone' ? '手机号' : '邮箱地址'}
+            </label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-blue/40" />
+              {mode === 'phone' ? (
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-blue/40" />
+              ) : (
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-blue/40" />
+              )}
               <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))}
-                placeholder="请输入手机号"
+                type={mode === 'phone' ? 'tel' : 'email'}
+                value={mode === 'phone' ? phone : email}
+                onChange={(e) => {
+                  if (mode === 'phone') {
+                    setPhone(e.target.value.replace(/\D/g, '').slice(0, 11));
+                  } else {
+                    setEmail(e.target.value.trim().toLowerCase().slice(0, 100));
+                  }
+                }}
+                placeholder={mode === 'phone' ? '请输入手机号' : '请输入邮箱地址'}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-burgundy/20 focus:border-burgundy transition-all"
               />
             </div>
@@ -110,9 +165,9 @@ export default function LoginModal() {
               </div>
               <button
                 onClick={sendCode}
-                disabled={!isValidPhone || countdown > 0}
+                disabled={!isValidInput || countdown > 0}
                 className={`px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                  isValidPhone && countdown === 0
+                  isValidInput && countdown === 0
                     ? 'bg-burgundy text-white hover:bg-burgundy-dark'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
@@ -130,9 +185,9 @@ export default function LoginModal() {
           {/* Submit */}
           <button
             onClick={submit}
-            disabled={!isValidPhone || code.length !== 6 || loading}
+            disabled={!isValidInput || code.length !== 6 || loading}
             className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${
-              isValidPhone && code.length === 6 && !loading
+              isValidInput && code.length === 6 && !loading
                 ? 'bg-burgundy text-white hover:bg-burgundy-dark shadow-lg shadow-burgundy/20'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
