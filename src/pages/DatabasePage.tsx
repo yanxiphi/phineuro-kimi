@@ -366,13 +366,12 @@ function CompanyTable({ companies, expandedId, onToggle }: {
 // 子组件：标签筛选面板
 // ============================================
 
-function TagFilterPanel({ filters, onChange, onClear, disabled }: {
-  filters: ActiveFilters; onChange: (f: ActiveFilters) => void; onClear: () => void; disabled?: boolean;
+function TagFilterPanel({ filters, onChange, onClear, disabled, guestMode, onShowLogin }: {
+  filters: ActiveFilters; onChange: (f: ActiveFilters) => void; onClear: () => void; disabled?: boolean; guestMode?: boolean; onShowLogin?: () => void;
 }) {
-  const [expandedDims, setExpandedDims] = useState<Set<string>>(new Set(['techRoute']));
+  const [expandedDims, setExpandedDims] = useState<Set<string>>(guestMode ? new Set() : new Set(['techRoute']));
 
   const toggleDim = (id: string) => {
-    if (disabled) return;
     setExpandedDims(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -381,7 +380,7 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
   };
 
   const toggleTag = (dim: keyof ActiveFilters, value: string) => {
-    if (disabled) return;
+    if (disabled || guestMode) return;
     onChange({
       ...filters,
       [dim]: filters[dim].includes(value)
@@ -394,12 +393,27 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-      {disabled && (
+      {/* 提示横幅 */}
+      {guestMode && (
+        <div className="px-3 py-2.5 rounded-lg bg-burgundy/5 border border-burgundy/20 text-xs text-burgundy/80">
+          <div className="flex items-center gap-2 mb-1">
+            <Lock className="w-3.5 h-3.5" />
+            <span className="font-medium">登录解锁完整筛选</span>
+          </div>
+          <p className="text-slate-blue/60 mb-2">注册即可免费试用30天，体验九维标签精准筛选</p>
+          {onShowLogin && (
+            <button onClick={onShowLogin} className="px-3 py-1 rounded bg-burgundy text-white text-xs font-medium hover:bg-burgundy-dark transition-colors">
+              登录 / 注册
+            </button>
+          )}
+        </div>
+      )}
+      {disabled && !guestMode && (
         <div className="px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
           试用期已过期，维度筛选功能已受限。
         </div>
       )}
-      <div className={`flex items-center justify-between ${disabled ? 'opacity-50' : ''}`}>
+      <div className={`flex items-center justify-between ${disabled || guestMode ? 'opacity-50' : ''}`}>
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-burgundy" />
           <span className="font-semibold text-sm text-foreground">九维标签筛选</span>
@@ -407,7 +421,7 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
             <span className="px-2 py-0.5 rounded-full bg-burgundy text-white text-xs font-medium">{filterCount}</span>
           )}
         </div>
-        {filterCount > 0 && !disabled && (
+        {filterCount > 0 && !disabled && !guestMode && (
           <button onClick={onClear} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1">
             <X className="w-3 h-3" /> 清除全部
           </button>
@@ -415,7 +429,7 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
       </div>
 
       {/* 已选标签快捷展示 */}
-      {filterCount > 0 && (
+      {filterCount > 0 && !guestMode && (
         <div className="flex flex-wrap gap-1.5">
           {ALL_DIMENSION_KEYS.flatMap(key =>
             filters[key].map(value => (
@@ -436,12 +450,15 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
           const selectedCount = filters[dim.id as keyof ActiveFilters].length;
           return (
             <div key={dim.id} className="border border-gray-100 rounded-lg overflow-hidden">
-              <button onClick={() => toggleDim(dim.id)} className={`w-full flex items-center justify-between px-3 py-2 transition-colors ${disabled ? 'cursor-not-allowed' : 'hover:bg-gray-50'}`}>
+              <button onClick={() => toggleDim(dim.id)} className={`w-full flex items-center justify-between px-3 py-2 transition-colors ${(disabled || guestMode) ? 'cursor-default' : 'hover:bg-gray-50'}`}>
                 <div className="flex items-center gap-2">
                   <Icon className="w-4 h-4" style={{ color: dim.color }} />
                   <span className="text-sm font-medium text-foreground">{dim.name}</span>
-                  {selectedCount > 0 && (
+                  {selectedCount > 0 && !guestMode && (
                     <span className="px-1.5 py-0.5 rounded bg-burgundy/10 text-burgundy text-xs">{selectedCount}</span>
+                  )}
+                  {guestMode && (
+                    <Lock className="w-3 h-3 text-slate-blue/30" />
                   )}
                 </div>
                 {isOpen ? <ChevronUp className="w-4 h-4 text-slate-blue/40" /> : <ChevronDown className="w-4 h-4 text-slate-blue/40" />}
@@ -455,10 +472,10 @@ function TagFilterPanel({ filters, onChange, onClear, disabled }: {
                         className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                           isSelected
                             ? 'text-white font-medium shadow-sm'
-                            : disabled ? 'bg-gray-100 text-slate-blue/50 cursor-not-allowed' : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
+                            : (disabled || guestMode) ? 'bg-gray-100 text-slate-blue/40 cursor-not-allowed' : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
                         }`}
                         style={isSelected ? { backgroundColor: tag.color || dim.color } : undefined}
-                        disabled={disabled}>
+                        disabled={disabled || guestMode}>
                         {tag.value}
                       </button>
                     );
@@ -865,17 +882,14 @@ export default function DatabasePage() {
           {showFilters && (
             <div className="lg:col-span-1">
               {isGuest ? (
-                <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-                  <Lock className="w-8 h-8 text-burgundy/30 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-foreground mb-1">九维标签筛选</p>
-                  <p className="text-xs text-slate-blue/60 mb-4">登录后即可使用多维度筛选</p>
-                  <button
-                    onClick={showLogin}
-                    className="px-4 py-2 rounded-lg bg-burgundy text-white text-sm font-medium hover:bg-burgundy-dark transition-colors"
-                  >
-                    登录 / 注册
-                  </button>
-                </div>
+                <TagFilterPanel
+                  filters={filters}
+                  onChange={setFilters}
+                  onClear={clearFilters}
+                  disabled={false}
+                  guestMode={true}
+                  onShowLogin={showLogin}
+                />
               ) : (
                 <TagFilterPanel
                   filters={filters}
