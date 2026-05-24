@@ -9,6 +9,7 @@ import DatabasePage from './pages/DatabasePage';
 import Reports from './pages/Reports';
 import TechRoutes from './pages/TechRoutes';
 import CompanyDetailPage from './pages/CompanyDetailPage';
+import CompanyComparePage from './pages/CompanyComparePage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/tech-routes" element={<TechRoutes />} />
             <Route path="/company/:id" element={<CompanyDetailPage />} />
+            <Route path="/compare" element={<CompanyComparePage />} />
           </Routes>
           <ScrollToTop />
           <LoginModal />

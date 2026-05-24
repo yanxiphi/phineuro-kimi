@@ -4,6 +4,7 @@ import {
   ArrowLeft, Building2, MapPin, Calendar, Cpu,
   DollarSign, Award, Mail, Phone, FileText, Globe,
   TrendingUp, Stethoscope, Users, Lightbulb, Lock,
+  GitCompare, Network, Handshake, FlaskConical, Target,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { companiesData, getFundingDisplay, getTechRouteMain } from '../data/companiesData';
@@ -58,6 +59,106 @@ function ChipRow({ label, values, getColor }: { label: string; values?: string[]
         ))}
       </div>
     </div>
+  );
+}
+
+// ============================================
+// 企业生态位：关联图谱
+// ============================================
+
+interface RelatedCompany {
+  id: number;
+  name: string;
+  nameEn: string;
+  techRoute?: string;
+  relationType: string;
+  relationLabel: string;
+}
+
+const LAB_KEYWORDS = ['清华', '北大', '中科院', 'MIT', 'Stanford', 'Harvard', 'Johns Hopkins', 'CMU', 'Caltech', 'Berkeley', 'UCSF', '浙江大学', '复旦大学', '上海交大', '华中科大', '中科大', '牛津', '剑桥', 'Imperial', 'ETH Zurich'];
+
+function findRelatedCompanies(company: typeof companiesData[0]): RelatedCompany[] {
+  const related: RelatedCompany[] = [];
+  const seen = new Set<number>();
+
+  // 1. 同赛道竞品：技术路线相同或疾病领域重叠
+  companiesData.forEach(c => {
+    if (c.id === company.id || seen.has(c.id)) return;
+    const sameTech = getTechRouteMain(c.techRoute) === getTechRouteMain(company.techRoute);
+    const sameDisease = c.diseaseAreas?.some(d => company.diseaseAreas?.includes(d));
+    if (sameTech || sameDisease) {
+      seen.add(c.id);
+      related.push({
+        id: c.id, name: c.name, nameEn: c.nameEn, techRoute: c.techRoute,
+        relationType: 'competitor', relationLabel: sameTech ? '同技术路线' : '同疾病领域',
+      });
+    }
+  });
+
+  // 2. 同一投资方
+  if (company.investors) {
+    const companyInvestors = company.investors.split(/[,、;；]/).map(s => s.trim()).filter(s => s.length > 1);
+    companiesData.forEach(c => {
+      if (c.id === company.id || seen.has(c.id) || !c.investors) return;
+      const otherInvestors = c.investors.split(/[,、;；]/).map(s => s.trim()).filter(s => s.length > 1);
+      const shared = companyInvestors.filter(a => otherInvestors.some(b => a.includes(b) || b.includes(a)));
+      if (shared.length > 0) {
+        seen.add(c.id);
+        related.push({
+          id: c.id, name: c.name, nameEn: c.nameEn, techRoute: c.techRoute,
+          relationType: 'investor', relationLabel: '同一投资方',
+        });
+      }
+    });
+  }
+
+  // 3. 同一 lab 背景
+  if (company.founderBg) {
+    const companyLabs = LAB_KEYWORDS.filter(k => company.founderBg?.includes(k));
+    companiesData.forEach(c => {
+      if (c.id === company.id || seen.has(c.id) || !c.founderBg) return;
+      const otherLabs = LAB_KEYWORDS.filter(k => c.founderBg?.includes(k));
+      const shared = companyLabs.filter(l => otherLabs.includes(l));
+      if (shared.length > 0) {
+        seen.add(c.id);
+        related.push({
+          id: c.id, name: c.name, nameEn: c.nameEn, techRoute: c.techRoute,
+          relationType: 'lab', relationLabel: `同 ${shared[0]} 背景`,
+        });
+      }
+    });
+  }
+
+  // 4. 海外对标
+  if (company.overseasPeer) {
+    companiesData.forEach(c => {
+      if (c.id === company.id || seen.has(c.id)) return;
+      if (c.overseasPeer && c.overseasPeer === company.overseasPeer) {
+        seen.add(c.id);
+        related.push({
+          id: c.id, name: c.name, nameEn: c.nameEn, techRoute: c.techRoute,
+          relationType: 'peer', relationLabel: '同海外对标',
+        });
+      }
+    });
+  }
+
+  return related.slice(0, 8);
+}
+
+function RelationBadge({ type }: { type: string }) {
+  const configs: Record<string, { color: string; icon: React.ElementType }> = {
+    competitor: { color: '#B01C2E', icon: Target },
+    investor: { color: '#D35400', icon: Handshake },
+    lab: { color: '#2980B9', icon: FlaskConical },
+    peer: { color: '#8E44AD', icon: Network },
+  };
+  const config = configs[type] || configs.competitor;
+  const Icon = config.icon;
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium text-white" style={{ backgroundColor: config.color }}>
+      <Icon className="w-3 h-3" />
+    </span>
   );
 }
 
@@ -340,6 +441,53 @@ export default function CompanyDetailPage() {
             </div>
           </div>
         )}
+
+        {/* 企业生态位 - 关联图谱 */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-burgundy/10 flex items-center justify-center">
+                <Network className="w-4 h-4 text-burgundy" />
+              </div>
+              <h3 className="font-semibold text-foreground">企业生态位</h3>
+            </div>
+            <button
+              onClick={() => {
+                const related = findRelatedCompanies(company);
+                const ids = [company.id, ...related.slice(0, 2).map(r => r.id)].join(',');
+                navigate(`/compare?ids=${ids}`);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-burgundy/10 text-burgundy text-xs font-medium hover:bg-burgundy hover:text-white transition-colors"
+            >
+              <GitCompare className="w-3.5 h-3.5" /> 对比
+            </button>
+          </div>
+
+          {(() => {
+            const related = findRelatedCompanies(company);
+            if (related.length === 0) {
+              return <p className="text-xs text-slate-blue/40">暂无关联企业数据</p>;
+            }
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {related.map(r => (
+                  <div
+                    key={r.id}
+                    onClick={() => navigate(`/company/${r.id}`)}
+                    className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 hover:bg-burgundy/5 cursor-pointer transition-colors group"
+                  >
+                    <RelationBadge type={r.relationType} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground group-hover:text-burgundy transition-colors truncate">{r.name}</p>
+                      <p className="text-[10px] text-slate-blue/40 truncate">{r.nameEn}</p>
+                    </div>
+                    <span className="text-[10px] text-slate-blue/40 flex-shrink-0">{r.relationLabel}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
 
         {/* 相关情报 - 登录用户可见（过期用户仅7天内） */}
         {!isGuest && displayedIntel.length > 0 && (

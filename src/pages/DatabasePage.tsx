@@ -6,7 +6,7 @@ import {
   MapPin, Award, TrendingUp, Database as DatabaseIcon, ChevronDown, ChevronUp,
   ArrowLeft, Layers, Stethoscope, Tag, Grid3X3, Microscope,
   BrainCircuit, Activity, Target, Box, Users,
-  Cpu, Monitor, Lightbulb, XCircle, Lock
+  Cpu, Monitor, Lightbulb, XCircle, Lock, GitCompare
 } from 'lucide-react';
 import { companiesData, getTechRouteMain, getFundingDisplay } from '../data/companiesData';
 import {
@@ -114,8 +114,8 @@ function Shield(props: any) {
 // 子组件：企业卡片
 // ============================================
 
-function CompanyCard({ company, expanded, onToggle }: {
-  company: Company; expanded: boolean; onToggle: () => void;
+function CompanyCard({ company, expanded, onToggle, isComparing, onToggleCompare }: {
+  company: Company; expanded: boolean; onToggle: () => void; isComparing?: boolean; onToggleCompare?: () => void;
 }) {
   const navigate = useNavigate();
   const techColor = getTechRouteColor(company.techRoute);
@@ -248,8 +248,9 @@ function DetailItem({ label, value }: { label: string; value?: string | null }) 
 // 子组件：企业表格
 // ============================================
 
-function CompanyTable({ companies, expandedId, onToggle }: {
+function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCompare }: {
   companies: Company[]; expandedId: number | null; onToggle: (id: number) => void;
+  compareIds?: number[]; onToggleCompare?: (id: number) => void;
 }) {
   const navigate = useNavigate();
   return (
@@ -267,6 +268,7 @@ function CompanyTable({ companies, expandedId, onToggle }: {
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[70px]">临床阶段</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[60px]">总部</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[70px]">融资</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-16">对比</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-12">详情</th>
             </tr>
           </thead>
@@ -314,6 +316,18 @@ function CompanyTable({ companies, expandedId, onToggle }: {
                       <span className="font-medium text-burgundy">{getFundingDisplay(company.totalFunding)}</span>
                     ) : (
                       <span className="text-slate-blue/40">-</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {onToggleCompare && (
+                      <label className="cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={compareIds?.includes(company.id) || false}
+                          onChange={(e) => { e.stopPropagation(); onToggleCompare(company.id); }}
+                          className="w-3.5 h-3.5 rounded border-gray-300 text-burgundy focus:ring-burgundy"
+                        />
+                      </label>
                     )}
                   </td>
                   <td className="px-3 py-2.5">
@@ -702,6 +716,7 @@ export default function DatabasePage() {
   const [showFilters, setShowFilters] = useState(true);
   const [listViewMode, setListViewMode] = useState<'card' | 'table'>('table');
   const [countryFilter, setCountryFilter] = useState<'global' | 'china' | 'usa' | 'others'>('global');
+  const [compareIds, setCompareIds] = useState<number[]>([]);
 
   // 过期用户自动清空筛选器（不能继续使用维度筛选）
   useEffect(() => {
@@ -928,13 +943,22 @@ export default function DatabasePage() {
                 </div>
                 {listViewMode === 'table' ? (
                   <CompanyTable companies={filteredCompanies} expandedId={expandedId}
-                    onToggle={(id) => setExpandedId(expandedId === id ? null : id)} />
+                    onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
+                    compareIds={compareIds}
+                    onToggleCompare={(id) => {
+                      setCompareIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : prev.length < 3 ? [...prev, id] : prev);
+                    }}
+                  />
                 ) : (
                   <>
                     {filteredCompanies.map(company => (
                       <CompanyCard key={company.id} company={company}
                         expanded={expandedId === company.id}
                         onToggle={() => setExpandedId(expandedId === company.id ? null : company.id)}
+                        isComparing={compareIds.includes(company.id)}
+                        onToggleCompare={() => {
+                          setCompareIds(prev => prev.includes(company.id) ? prev.filter(i => i !== company.id) : prev.length < 3 ? [...prev, company.id] : prev);
+                        }}
                       />
                     ))}
                   </>
@@ -952,6 +976,46 @@ export default function DatabasePage() {
             )}
           </div>
         </div>
+
+        {/* 浮动对比栏 */}
+        {compareIds.length > 0 && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-lg px-5 py-3 flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <GitCompare className="w-4 h-4 text-burgundy" />
+                <span className="text-sm font-medium text-foreground">已选 {compareIds.length} 家</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {compareIds.map(id => {
+                  const c = companiesData.find(x => x.id === id);
+                  return c ? (
+                    <span key={id} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-burgundy/10 text-burgundy text-xs">
+                      {c.name}
+                      <button onClick={() => setCompareIds(prev => prev.filter(i => i !== id))} className="hover:text-red-500">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ) : null;
+                })}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCompareIds([])}
+                  className="text-xs text-slate-blue/50 hover:text-red-500 transition-colors"
+                >
+                  清空
+                </button>
+                <button
+                  onClick={() => navigate(`/compare?ids=${compareIds.join(',')}`)}
+                  disabled={compareIds.length < 2}
+                  className="px-4 py-1.5 rounded-lg bg-burgundy text-white text-xs font-medium hover:bg-burgundy-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  开始对比
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-slate-blue/40">
