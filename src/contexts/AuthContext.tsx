@@ -16,6 +16,14 @@ interface AuthContextType {
   user: User | null;
   isLoggedIn: boolean;
   isLoading: boolean;
+  isGuest: boolean;
+  isRegistered: boolean;
+  isPro: boolean;
+  isExpired: boolean;
+  canViewDetail: boolean;
+  canUseFilters: boolean;
+  canDownloadReports: boolean;
+  canViewIntelHistory: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
   showLogin: () => void;
@@ -69,12 +77,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const showLogin = useCallback(() => setIsLoginOpen(true), []);
   const hideLogin = useCallback(() => setIsLoginOpen(false), []);
 
+  // 权限计算
+  const isGuest = !user;
+  const isPro = user?.tier === 'pro';
+  const isRegistered = !!user && user.tier !== 'guest';
+  const isExpired = user?.tier === 'registered_expired';
+
+  const canViewDetail = !isGuest;                    // 所有登录用户都能看详情
+  const canUseFilters = isPro || user?.tier === 'registered'; // 仅试用期内和Pro
+  const canDownloadReports = isPro;                  // 仅Pro
+  const canViewIntelHistory = !isGuest;              // 所有登录用户都能看（过期用户前端限制7天）
+
   return (
     <AuthContext.Provider
       value={{
         user,
         isLoggedIn: !!user,
         isLoading,
+        isGuest,
+        isRegistered,
+        isPro,
+        isExpired,
+        canViewDetail,
+        canUseFilters,
+        canDownloadReports,
+        canViewIntelHistory,
         login,
         logout,
         showLogin,

@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft, Building2, MapPin, Calendar, Cpu,
   DollarSign, Award, Mail, Phone, FileText, Globe,
-  TrendingUp, Stethoscope, Users, Lightbulb,
+  TrendingUp, Stethoscope, Users, Lightbulb, Lock,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { companiesData, getFundingDisplay, getTechRouteMain } from '../data/companiesData';
 import {
   getTechRouteColor, getClinicalStageColor, getDiseaseColor,
@@ -78,7 +79,15 @@ export default function CompanyDetailPage() {
   const companyId = Number(id);
   const company = companiesData.find(c => c.id === companyId);
   const [linkedIntel, setLinkedIntel] = useState<IntelFeed[]>([]);
-  const [intelLoading, setIntelLoading] = useState(false);
+  const [, setIntelLoading] = useState(false);
+  const { isGuest, isExpired, showLogin } = useAuth();
+
+  // 过期用户仅显示7天内的情报
+  const displayedIntel = useMemo(() => {
+    if (!isExpired) return linkedIntel;
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    return linkedIntel.filter(feed => new Date(feed.published_at) >= cutoff);
+  }, [linkedIntel, isExpired]);
 
   useEffect(() => {
     if (companyId) {
@@ -219,6 +228,31 @@ export default function CompanyDetailPage() {
           </div>
         )}
 
+        {/* 访客权限控制：详细信息 */}
+        {isGuest ? (
+          <div className="relative bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-6 overflow-hidden">
+            <div className="absolute inset-0 backdrop-blur-md bg-white/60 flex flex-col items-center justify-center z-10">
+              <Lock className="w-10 h-10 text-burgundy/40 mb-3" />
+              <p className="text-sm font-medium text-foreground mb-1">企业详细信息</p>
+              <p className="text-xs text-slate-blue/60 mb-4">登录后即可查看完整企业档案</p>
+              <button
+                onClick={showLogin}
+                className="px-5 py-2 rounded-lg bg-burgundy text-white text-sm font-medium hover:bg-burgundy-dark transition-colors"
+              >
+                立即登录
+              </button>
+            </div>
+            {/* 占位内容，用于保持高度 */}
+            <div className="opacity-10 pointer-events-none select-none space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-1/3" />
+              <div className="h-3 bg-gray-200 rounded w-2/3" />
+              <div className="h-3 bg-gray-200 rounded w-1/2" />
+              <div className="h-3 bg-gray-200 rounded w-3/4" />
+            </div>
+          </div>
+        ) : (
+          <>
+
         {/* Info Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
           {/* 基本信息 */}
@@ -278,6 +312,9 @@ export default function CompanyDetailPage() {
           )}
         </div>
 
+          </>
+        )}
+
         {/* Contact */}
         {(company.email || company.phone) && (
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
@@ -304,18 +341,20 @@ export default function CompanyDetailPage() {
           </div>
         )}
 
-        {/* 相关情报 */}
-        {linkedIntel.length > 0 && (
+        {/* 相关情报 - 登录用户可见（过期用户仅7天内） */}
+        {!isGuest && displayedIntel.length > 0 && (
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-burgundy/10 flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-burgundy" />
               </div>
               <h3 className="font-semibold text-foreground">相关情报</h3>
-              <span className="text-xs text-slate-blue/40 ml-2">{linkedIntel.length} 条</span>
+              <span className="text-xs text-slate-blue/40 ml-2">
+                {displayedIntel.length} 条{isExpired ? '（最近7天）' : ''}
+              </span>
             </div>
             <div className="space-y-3">
-              {linkedIntel.map(feed => (
+              {displayedIntel.map(feed => (
                 <a
                   key={feed.id}
                   href={feed.url}

@@ -1,11 +1,12 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useAuth } from '../contexts/AuthContext';
 import {
   Search, Filter, X, ExternalLink, Mail, Building2,
   MapPin, Award, TrendingUp, Database as DatabaseIcon, ChevronDown, ChevronUp,
   ArrowLeft, Layers, Stethoscope, Tag, Grid3X3, Microscope,
   BrainCircuit, Activity, Target, Box, Users,
-  Cpu, Monitor, Lightbulb, XCircle
+  Cpu, Monitor, Lightbulb, XCircle, Lock
 } from 'lucide-react';
 import { companiesData, getTechRouteMain, getFundingDisplay } from '../data/companiesData';
 import {
@@ -365,12 +366,13 @@ function CompanyTable({ companies, expandedId, onToggle }: {
 // 子组件：标签筛选面板
 // ============================================
 
-function TagFilterPanel({ filters, onChange, onClear }: {
-  filters: ActiveFilters; onChange: (f: ActiveFilters) => void; onClear: () => void;
+function TagFilterPanel({ filters, onChange, onClear, disabled }: {
+  filters: ActiveFilters; onChange: (f: ActiveFilters) => void; onClear: () => void; disabled?: boolean;
 }) {
   const [expandedDims, setExpandedDims] = useState<Set<string>>(new Set(['techRoute']));
 
   const toggleDim = (id: string) => {
+    if (disabled) return;
     setExpandedDims(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -379,6 +381,7 @@ function TagFilterPanel({ filters, onChange, onClear }: {
   };
 
   const toggleTag = (dim: keyof ActiveFilters, value: string) => {
+    if (disabled) return;
     onChange({
       ...filters,
       [dim]: filters[dim].includes(value)
@@ -391,7 +394,12 @@ function TagFilterPanel({ filters, onChange, onClear }: {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-      <div className="flex items-center justify-between">
+      {disabled && (
+        <div className="px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
+          试用期已过期，维度筛选功能已受限。
+        </div>
+      )}
+      <div className={`flex items-center justify-between ${disabled ? 'opacity-50' : ''}`}>
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-burgundy" />
           <span className="font-semibold text-sm text-foreground">九维标签筛选</span>
@@ -399,7 +407,7 @@ function TagFilterPanel({ filters, onChange, onClear }: {
             <span className="px-2 py-0.5 rounded-full bg-burgundy text-white text-xs font-medium">{filterCount}</span>
           )}
         </div>
-        {filterCount > 0 && (
+        {filterCount > 0 && !disabled && (
           <button onClick={onClear} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1">
             <X className="w-3 h-3" /> 清除全部
           </button>
@@ -411,8 +419,8 @@ function TagFilterPanel({ filters, onChange, onClear }: {
         <div className="flex flex-wrap gap-1.5">
           {ALL_DIMENSION_KEYS.flatMap(key =>
             filters[key].map(value => (
-              <button key={`${key}-${value}`} onClick={() => toggleTag(key, value)}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs bg-burgundy/10 text-burgundy hover:bg-red-50 transition-colors">
+              <button key={`${key}-${value}`} onClick={() => !disabled && toggleTag(key, value)}
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs bg-burgundy/10 text-burgundy transition-colors ${disabled ? 'cursor-not-allowed opacity-60' : 'hover:bg-red-50'}`}>
                 {value} <X className="w-3 h-3" />
               </button>
             ))
@@ -428,7 +436,7 @@ function TagFilterPanel({ filters, onChange, onClear }: {
           const selectedCount = filters[dim.id as keyof ActiveFilters].length;
           return (
             <div key={dim.id} className="border border-gray-100 rounded-lg overflow-hidden">
-              <button onClick={() => toggleDim(dim.id)} className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 transition-colors">
+              <button onClick={() => toggleDim(dim.id)} className={`w-full flex items-center justify-between px-3 py-2 transition-colors ${disabled ? 'cursor-not-allowed' : 'hover:bg-gray-50'}`}>
                 <div className="flex items-center gap-2">
                   <Icon className="w-4 h-4" style={{ color: dim.color }} />
                   <span className="text-sm font-medium text-foreground">{dim.name}</span>
@@ -447,9 +455,10 @@ function TagFilterPanel({ filters, onChange, onClear }: {
                         className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                           isSelected
                             ? 'text-white font-medium shadow-sm'
-                            : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
+                            : disabled ? 'bg-gray-100 text-slate-blue/50 cursor-not-allowed' : 'bg-gray-100 text-slate-blue hover:bg-gray-200'
                         }`}
-                        style={isSelected ? { backgroundColor: tag.color || dim.color } : undefined}>
+                        style={isSelected ? { backgroundColor: tag.color || dim.color } : undefined}
+                        disabled={disabled}>
                         {tag.value}
                       </button>
                     );
@@ -668,6 +677,7 @@ function TagsCloudView({ filters, onChange }: {
 
 export default function DatabasePage() {
   const navigate = useNavigate();
+  const { canUseFilters, isGuest, isExpired, showLogin } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('disease');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<ActiveFilters>(INITIAL_FILTERS);
@@ -675,6 +685,13 @@ export default function DatabasePage() {
   const [showFilters, setShowFilters] = useState(true);
   const [listViewMode, setListViewMode] = useState<'card' | 'table'>('table');
   const [countryFilter, setCountryFilter] = useState<'global' | 'china' | 'usa' | 'others'>('global');
+
+  // 过期用户自动清空筛选器（不能继续使用维度筛选）
+  useEffect(() => {
+    if (isExpired) {
+      setFilters(INITIAL_FILTERS);
+    }
+  }, [isExpired]);
 
   // 搜索+标签过滤+国家筛选
   const filteredCompanies = useMemo(() => {
@@ -844,10 +861,29 @@ export default function DatabasePage() {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Filters (只在 list/tags 视图显示，或用户展开时显示) */}
+          {/* Sidebar Filters */}
           {showFilters && (
             <div className="lg:col-span-1">
-              <TagFilterPanel filters={filters} onChange={setFilters} onClear={clearFilters} />
+              {isGuest ? (
+                <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+                  <Lock className="w-8 h-8 text-burgundy/30 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-foreground mb-1">九维标签筛选</p>
+                  <p className="text-xs text-slate-blue/60 mb-4">登录后即可使用多维度筛选</p>
+                  <button
+                    onClick={showLogin}
+                    className="px-4 py-2 rounded-lg bg-burgundy text-white text-sm font-medium hover:bg-burgundy-dark transition-colors"
+                  >
+                    登录 / 注册
+                  </button>
+                </div>
+              ) : (
+                <TagFilterPanel
+                  filters={filters}
+                  onChange={setFilters}
+                  onClear={clearFilters}
+                  disabled={!canUseFilters}
+                />
+              )}
             </div>
           )}
 
