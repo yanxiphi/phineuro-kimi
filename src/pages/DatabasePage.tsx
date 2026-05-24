@@ -117,6 +117,7 @@ function Shield(props: any) {
 function CompanyCard({ company, expanded, onToggle, isComparing, onToggleCompare }: {
   company: Company; expanded: boolean; onToggle: () => void; isComparing?: boolean; onToggleCompare?: () => void;
 }) {
+  void isComparing; void onToggleCompare;
   const navigate = useNavigate();
   const techColor = getTechRouteColor(company.techRoute);
   const tags: { label: string; color: string; dim: string }[] = [];

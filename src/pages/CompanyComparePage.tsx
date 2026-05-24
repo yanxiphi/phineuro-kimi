@@ -193,7 +193,7 @@ export default function CompanyComparePage() {
 
             <CompareRow label="临床阶段" icon={Activity}>
               {selectedCompanies.map(c => (
-                <CompareCell key={c.id} value={c.clinicalStage} color={getClinicalStageColor(c.clinicalStage)} />
+                <CompareCell key={c.id} value={c.clinicalStage} color={getClinicalStageColor(c.clinicalStage || '')} />
               ))}
             </CompareRow>
 
