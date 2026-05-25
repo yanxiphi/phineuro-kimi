@@ -22,13 +22,6 @@ interface IntelFeed {
   tags?: string;
 }
 
-const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-  policy: { label: '政策动态', icon: Landmark, color: 'text-amber-700', bg: 'bg-amber-50' },
-  academic: { label: '前沿论文', icon: FileText, color: 'text-blue-700', bg: 'bg-blue-50' },
-  industry: { label: '行业新闻', icon: Newspaper, color: 'text-slate-700', bg: 'bg-slate-50' },
-  company: { label: '公司动态', icon: Building2, color: 'text-burgundy', bg: 'bg-burgundy/[0.08]' },
-};
-
 const API_BASE = 'https://datasets.phineuro.life/api';
 
 function formatTime(dateStr: string): string {
