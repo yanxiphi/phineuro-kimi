@@ -189,7 +189,7 @@ function CompanyCard({ company, expanded, onToggle, isComparing, onToggleCompare
           {/* 基本信息 */}
           <div className="grid md:grid-cols-2 gap-4 pt-3 border-t border-gray-100">
             <div className="space-y-1.5 text-sm">
-              <DetailItem label="创始人" value={company.founder} />
+              <DetailItem label="创始人" value={company.founder} renderValue={v => <FounderLinks founderStr={v} />} />
               <DetailItem label="创始人背景" value={company.founderBg} />
               <DetailItem label="核心产品" value={company.products} />
               <DetailItem label="对标海外" value={company.overseasPeer} />
@@ -235,12 +235,47 @@ function TagRow({ icon: Icon, label, value, color }: { icon: any; label: string;
   );
 }
 
-function DetailItem({ label, value }: { label: string; value?: string | null }) {
+function founderSlug(name: string): string {
+  const clean = name.replace(/[（(].*?[）)]/g, '').trim();
+  if (/^[\u4e00-\u9fff]/.test(clean)) {
+    return clean.replace(/\s+/g, '-').replace(/·/g, '-');
+  }
+  return clean.toLowerCase().replace(/\s+/g, '-');
+}
+
+function FounderLinks({ founderStr }: { founderStr: string }) {
+  const navigate = useNavigate();
+  if (!founderStr) return null;
+  const names = founderStr.split('/').map(n => n.trim()).filter(Boolean);
+  if (names.length === 0) return null;
+  return (
+    <span className="flex flex-wrap gap-1">
+      {names.map((name, i) => {
+        const clean = name.replace(/[（(].*?[）)]/g, '').trim();
+        if (!clean) return null;
+        const slug = founderSlug(clean);
+        return (
+          <span key={i}>
+            {i > 0 && <span className="text-slate-blue/30"> / </span>}
+            <button
+              onClick={() => navigate(`/founder/${encodeURIComponent(slug)}`)}
+              className="text-burgundy hover:underline transition-colors"
+            >
+              {name}
+            </button>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function DetailItem({ label, value, renderValue }: { label: string; value?: string | null; renderValue?: (v: string) => React.ReactNode }) {
   if (!value || value === '-') return null;
   return (
     <div className="flex gap-2">
       <span className="text-slate-blue/50 flex-shrink-0">{label}:</span>
-      <span className="text-foreground">{value}</span>
+      <span className="text-foreground">{renderValue ? renderValue(value) : value}</span>
     </div>
   );
 }
@@ -342,7 +377,7 @@ function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCom
                     <td colSpan={10} className="px-4 py-4 bg-burgundy/[0.02] border-t border-gray-50">
                       <div className="grid md:grid-cols-2 gap-4 text-sm">
                         <div className="space-y-1.5">
-                          <DetailItem label="创始人" value={company.founder} />
+                          <DetailItem label="创始人" value={company.founder} renderValue={v => <FounderLinks founderStr={v} />} />
                           <DetailItem label="核心产品" value={company.products} />
                           <DetailItem label="产品阶段" value={company.productStage} />
                           <DetailItem label="最新融资" value={`${company.latestRound} ${company.latestAmount ? `(${company.latestAmount}亿)` : ''}`} />

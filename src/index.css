@@ -38,7 +38,7 @@
     @apply border-border;
   }
 
-  body {
+  html, body {
     @apply bg-cream text-text-primary font-sans antialiased;
     font-size: 14px;
     line-height: 1.7;

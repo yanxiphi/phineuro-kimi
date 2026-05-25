@@ -50,7 +50,7 @@ export default function FounderProfilePage() {
         if (data.data) {
           setFounder(data.data as Founder);
         } else {
-          setError(data.error || '未找到创始人信息');
+          setError(data.error === 'Founder not found' ? '创始人信息搭建中' : (data.error || '创始人信息搭建中'));
         }
         setLoading(false);
       })
