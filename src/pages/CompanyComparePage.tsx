@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   ArrowLeft, Building2, Cpu, Stethoscope, DollarSign,
   Award, Users, Lightbulb, MapPin, Calendar, TrendingUp,
@@ -12,6 +12,15 @@ import {
   getChainLevel, getChainLevelColor,
 } from '../data/databaseTags';
 import CompanyTimeline from '../components/CompanyTimeline';
+
+interface IntelFeed {
+  id: number;
+  title: string;
+  title_zh?: string;
+  url: string;
+  published_at: string;
+  event_type?: string;
+}
 
 const MAX_COMPARE = 3;
 
@@ -111,6 +120,30 @@ export default function CompanyComparePage() {
   const selectedCompanies = useMemo(() => {
     return ids.map(id => companiesData.find(c => c.id === id)).filter(Boolean) as typeof companiesData;
   }, [ids]);
+
+  const [intelMap, setIntelMap] = useState<Record<number, IntelFeed[]>>({});
+  const [intelLoading, setIntelLoading] = useState(false);
+
+  useEffect(() => {
+    if (ids.length === 0) return;
+    setIntelLoading(true);
+    fetch(`https://datasets.phineuro.life/api/intel/by-company/batch?ids=${ids.join(',')}&limit=10`)
+      .then(res => res.json())
+      .then(data => {
+        const map: Record<number, IntelFeed[]> = {};
+        if (data.data) {
+          for (const [key, feeds] of Object.entries(data.data)) {
+            map[parseInt(key)] = (feeds as IntelFeed[]);
+          }
+        }
+        setIntelMap(map);
+        setIntelLoading(false);
+      })
+      .catch(() => {
+        setIntelMap({});
+        setIntelLoading(false);
+      });
+  }, [idsParam]);
 
   if (selectedCompanies.length < 2) {
     return (
@@ -273,7 +306,14 @@ export default function CompanyComparePage() {
               {selectedCompanies.map(c => (
                 <div key={c.id}>
                   <h4 className="text-sm font-medium text-burgundy mb-3">{c.name}</h4>
-                  <CompanyTimeline founded={c.founded} intelFeeds={[]} />
+                  {intelLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="w-6 h-6 border-2 border-burgundy border-t-transparent rounded-full animate-spin" />
+                      <span className="ml-2 text-xs text-slate-blue/50">加载情报...</span>
+                    </div>
+                  ) : (
+                    <CompanyTimeline founded={c.founded} intelFeeds={intelMap[c.id] || []} />
+                  )}
                 </div>
               ))}
             </div>

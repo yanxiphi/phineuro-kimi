@@ -55,7 +55,7 @@ function InfoCard({ icon: Icon, title, children, intelItems }: {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
+function InfoRow({ label, value }: { label: string; value?: string | number | React.ReactNode | null }) {
   if (value === null || value === undefined || value === '' || value === '-') return null;
   return (
     <div className="flex gap-3 text-sm">
@@ -95,6 +95,42 @@ interface RelatedCompany {
 }
 
 const LAB_KEYWORDS = ['清华', '北大', '中科院', 'MIT', 'Stanford', 'Harvard', 'Johns Hopkins', 'CMU', 'Caltech', 'Berkeley', 'UCSF', '浙江大学', '复旦大学', '上海交大', '华中科大', '中科大', '牛津', '剑桥', 'Imperial', 'ETH Zurich'];
+
+function founderSlug(name: string): string {
+  const clean = name.replace(/[（(].*?[）)]/g, '').trim();
+  if (/^[\u4e00-\u9fff]/.test(clean)) {
+    return clean.replace(/\s+/g, '-').replace(/·/g, '-');
+  }
+  return clean.toLowerCase().replace(/\s+/g, '-');
+}
+
+function FounderLinks({ founderStr }: { founderStr: string }) {
+  const navigate = useNavigate();
+  if (!founderStr) return null;
+  const names = founderStr.split('/').map(n => n.trim()).filter(Boolean);
+  if (names.length === 0) return null;
+
+  return (
+    <span className="flex flex-wrap gap-1">
+      {names.map((name, i) => {
+        const clean = name.replace(/[（(].*?[）)]/g, '').trim();
+        if (!clean) return null;
+        const slug = founderSlug(clean);
+        return (
+          <span key={i}>
+            {i > 0 && <span className="text-slate-blue/30"> / </span>}
+            <button
+              onClick={() => navigate(`/founder/${encodeURIComponent(slug)}`)}
+              className="text-burgundy hover:underline transition-colors"
+            >
+              {clean}
+            </button>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
 
 function findRelatedCompanies(company: typeof companiesData[0]): RelatedCompany[] {
   const related: RelatedCompany[] = [];
@@ -385,7 +421,7 @@ export default function CompanyDetailPage() {
           {/* 基本信息 */}
           <InfoCard icon={Building2} title="基本信息">
             <InfoRow label="企业类型" value={company.type} />
-            <InfoRow label="创始人" value={company.founder} />
+            <InfoRow label="创始人" value={<FounderLinks founderStr={company.founder} />} />
             <InfoRow label="创始人背景" value={company.founderBg} />
             <InfoRow label="技术来源" value={company.techSource} />
             <InfoRow label="IPO状态" value={company.ipoStatus} />
