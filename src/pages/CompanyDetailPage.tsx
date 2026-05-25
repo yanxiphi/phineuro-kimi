@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { companiesData, getFundingDisplay, getTechRouteMain } from '../data/companiesData';
+import CompanyTimeline from '../components/CompanyTimeline';
 import {
   getTechRouteColor, getClinicalStageColor, getDiseaseColor,
   getChainLevel, getChainLevelColor,
@@ -22,7 +23,10 @@ function TagItem({ label, color }: { label: string; color: string }) {
   );
 }
 
-function InfoCard({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
+function InfoCard({ icon: Icon, title, children, intelItems }: {
+  icon: React.ElementType; title: string; children: React.ReactNode;
+  intelItems?: IntelFeed[];
+}) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
       <div className="flex items-center gap-2 mb-4">
@@ -32,6 +36,21 @@ function InfoCard({ icon: Icon, title, children }: { icon: React.ElementType; ti
         <h3 className="font-semibold text-foreground">{title}</h3>
       </div>
       <div className="space-y-2.5">{children}</div>
+      {intelItems && intelItems.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <h4 className="text-[11px] font-medium text-burgundy mb-2 flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> 最新情报
+          </h4>
+          <div className="space-y-1.5">
+            {intelItems.slice(0, 2).map(feed => (
+              <a key={feed.id} href={feed.url} target="_blank" rel="noopener noreferrer"
+                className="block text-xs text-foreground hover:text-burgundy transition-colors line-clamp-1">
+                {feed.title_zh || feed.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -172,6 +191,7 @@ interface IntelFeed {
   published_at: string;
   source_name: string;
   url: string;
+  event_type?: string;
 }
 
 export default function CompanyDetailPage() {
@@ -189,6 +209,12 @@ export default function CompanyDetailPage() {
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     return linkedIntel.filter(feed => new Date(feed.published_at) >= cutoff);
   }, [linkedIntel, isExpired]);
+
+  // 按事件类型将情报分发到对应信息卡片
+  const techIntel = displayedIntel.filter(f => ['product', 'academic'].includes(f.event_type || ''));
+  const fundingIntel = displayedIntel.filter(f => f.event_type === 'funding');
+  const clinicalIntel = displayedIntel.filter(f => ['clinical', 'regulatory'].includes(f.event_type || ''));
+  const marketIntel = displayedIntel.filter(f => ['partnership', 'personnel'].includes(f.event_type || ''));
 
   useEffect(() => {
     if (companyId) {
@@ -367,7 +393,7 @@ export default function CompanyDetailPage() {
           </InfoCard>
 
           {/* 技术路线 */}
-          <InfoCard icon={Cpu} title="技术与产品">
+          <InfoCard icon={Cpu} title="技术与产品" intelItems={techIntel}>
             <InfoRow label="技术路线" value={company.techRoute} />
             <InfoRow label="产业链位置" value={company.chainPosition} />
             <InfoRow label="细分赛道" value={company.segment} />
@@ -377,7 +403,7 @@ export default function CompanyDetailPage() {
           </InfoCard>
 
           {/* 融资信息 */}
-          <InfoCard icon={DollarSign} title="融资信息">
+          <InfoCard icon={DollarSign} title="融资信息" intelItems={fundingIntel}>
             <InfoRow label="融资阶段" value={company.fundingStage || company.latestRound} />
             <InfoRow label="最新轮次" value={company.latestRound} />
             <InfoRow label="最新金额" value={company.latestAmount !== null ? `${company.latestAmount}亿元` : null} />
@@ -386,7 +412,7 @@ export default function CompanyDetailPage() {
           </InfoCard>
 
           {/* 市场与优势 */}
-          <InfoCard icon={Award} title="市场与优势">
+          <InfoCard icon={Award} title="市场与优势" intelItems={marketIntel}>
             <InfoRow label="核心优势" value={company.advantage} />
             <InfoRow label="对标海外" value={company.overseasPeer} />
             <InfoRow label="合作医院" value={company.hospitals} />
@@ -395,7 +421,7 @@ export default function CompanyDetailPage() {
 
           {/* 疾病领域 */}
           {(company.diseaseAreas?.length || company.diseaseIndications?.length) && (
-            <InfoCard icon={Stethoscope} title="疾病领域">
+            <InfoCard icon={Stethoscope} title="疾病领域" intelItems={clinicalIntel}>
               <ChipRow label="疾病领域" values={company.diseaseAreas} getColor={getDiseaseColor} />
               <ChipRow label="适应症" values={company.diseaseIndications} getColor={() => '#27AE60'} />
               <InfoRow label="临床阶段" value={company.clinicalStage} />
@@ -489,52 +515,9 @@ export default function CompanyDetailPage() {
           })()}
         </div>
 
-        {/* 相关情报 - 登录用户可见（过期用户仅7天内） */}
+        {/* 企业时间线 */}
         {!isGuest && displayedIntel.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-burgundy/10 flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-burgundy" />
-              </div>
-              <h3 className="font-semibold text-foreground">相关情报</h3>
-              <span className="text-xs text-slate-blue/40 ml-2">
-                {displayedIntel.length} 条{isExpired ? '（最近7天）' : ''}
-              </span>
-            </div>
-            <div className="space-y-3">
-              {displayedIntel.map(feed => (
-                <a
-                  key={feed.id}
-                  href={feed.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-3 rounded-lg bg-gray-50 hover:bg-burgundy/5 transition-colors group"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground group-hover:text-burgundy transition-colors line-clamp-2">
-                        {feed.title_zh || feed.title}
-                      </p>
-                      <p className="text-xs text-slate-blue/50 mt-1 line-clamp-2">
-                        {feed.summary_zh || feed.summary}
-                      </p>
-                      <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-blue/40">
-                        <span>{feed.source_name}</span>
-                        <span>{new Date(feed.published_at).toLocaleDateString('zh-CN')}</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                          feed.category === '融资' ? 'bg-green-50 text-green-600' :
-                          feed.category === '临床' ? 'bg-blue-50 text-blue-600' :
-                          feed.category === '政策' ? 'bg-amber-50 text-amber-600' :
-                          feed.category === '学术' ? 'bg-burgundy/10 text-burgundy' :
-                          'bg-gray-50 text-gray-500'
-                        }`}>{feed.category}</span>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
+          <CompanyTimeline founded={company.founded} intelFeeds={displayedIntel} />
         )}
 
         {/* Data Source */}

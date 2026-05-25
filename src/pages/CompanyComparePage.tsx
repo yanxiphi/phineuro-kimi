@@ -11,6 +11,7 @@ import {
   getTechRouteColor, getClinicalStageColor, getDiseaseColor,
   getChainLevel, getChainLevelColor,
 } from '../data/databaseTags';
+import CompanyTimeline from '../components/CompanyTimeline';
 
 const MAX_COMPARE = 3;
 
@@ -259,6 +260,23 @@ export default function CompanyComparePage() {
             <CompareRow label="对标海外" icon={BarChart3}>
               {selectedCompanies.map(c => <CompareCell key={c.id} value={c.overseasPeer} />)}
             </CompareRow>
+          </div>
+        </div>
+
+        {/* 时间线对比 */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-6">
+          <div className="px-5 py-3 border-b border-gray-100 bg-burgundy/[0.02]">
+            <h2 className="font-semibold text-foreground text-sm">商业化时间线对比</h2>
+          </div>
+          <div className="p-5">
+            <div className="grid gap-6" style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}>
+              {selectedCompanies.map(c => (
+                <div key={c.id}>
+                  <h4 className="text-sm font-medium text-burgundy mb-3">{c.name}</h4>
+                  <CompanyTimeline founded={c.founded} intelFeeds={[]} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
