@@ -78,7 +78,7 @@ export default function FounderProfilePage() {
         <div className="max-w-2xl mx-auto px-4 text-center">
           <User className="w-16 h-16 text-slate-blue/20 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-burgundy mb-2">创始人信息</h1>
-          <p className="text-slate-blue/60 mb-6">{error || '未找到创始人信息'}</p>
+          <p className="text-slate-blue/60 mb-6">{error || '创始人信息搭建中'}</p>
           <button
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-burgundy text-white text-sm font-medium hover:bg-burgundy-dark transition-colors"

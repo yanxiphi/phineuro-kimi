@@ -198,30 +198,7 @@ export default function NewsPage() {
           })}
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
-          {[
-            { key: 'all' as ContentCategory, label: '全部' },
-            { key: 'policy' as ContentCategory, label: '政策动态' },
-            { key: 'academic' as ContentCategory, label: '前沿论文' },
-            { key: 'industry' as ContentCategory, label: '行业新闻' },
-            { key: 'company' as ContentCategory, label: '公司动态' },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveCategory(tab.key)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                activeCategory === tab.key
-                  ? 'bg-burgundy text-white shadow-card'
-                  : 'bg-white text-slate-blue border border-gray-200 hover:border-burgundy/30 hover:text-burgundy'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
+        {/* Content -->
         {loading && feeds.length === 0 ? (
           <div className="flex items-center justify-center py-16">
             <div className="w-8 h-8 border-2 border-burgundy border-t-transparent rounded-full animate-spin" />
@@ -235,8 +212,9 @@ export default function NewsPage() {
         ) : (
           <div className="space-y-4">
             {filteredFeeds.map((feed) => {
-              const displayTitle = feed.title_zh || feed.title;
-              const displaySummary = feed.summary_zh || feed.summary;
+              const hasTranslation = !!feed.title_zh?.trim();
+              const displayTitle = feed.title_zh?.trim() || feed.title;
+              const displaySummary = feed.summary_zh?.trim() || feed.summary;
               const cat = feed.content_category || feed.category || 'industry';
               const tags = parseTags(feed.tags);
 
@@ -260,6 +238,7 @@ export default function NewsPage() {
                       </div>
                       <h3 className="text-base font-semibold text-text-primary mb-2 group-hover:text-burgundy transition-colors">
                         {displayTitle}
+                        {!hasTranslation && <span className="ml-1 text-[10px] text-slate-blue/40 font-normal">[原文]</span>}
                       </h3>
                       <p className="text-sm text-text-secondary leading-relaxed mb-3 line-clamp-3">
                         {displaySummary}

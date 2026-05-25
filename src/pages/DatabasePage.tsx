@@ -262,6 +262,7 @@ function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCom
             <tr>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-10">#</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[140px]">企业名称</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-12">详情</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[90px]">技术路线</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[100px]">细分赛道</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[80px]">产业链</th>
@@ -270,7 +271,6 @@ function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCom
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[60px]">总部</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase min-w-[70px]">融资</th>
               <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-16">对比</th>
-              <th className="px-3 py-2.5 text-left text-xs font-semibold text-slate-blue uppercase w-12">详情</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -282,9 +282,14 @@ function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCom
                   <td className="px-3 py-2.5">
                     <div
                       onClick={(e) => { e.stopPropagation(); navigate(`/company/${company.id}`); }}
-                      className="font-medium text-foreground cursor-pointer hover:text-burgundy transition-colors"
-                    >{company.name}</div>
-                    <div className="text-xs text-slate-blue/40">{company.nameEn}</div>
+                      className="cursor-pointer group"
+                    >
+                      <div className="font-medium text-burgundy group-hover:underline transition-colors">{company.name}</div>
+                      <div className="text-xs text-slate-blue/40 group-hover:text-burgundy/60 transition-colors">{company.nameEn}</div>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {expandedId === company.id ? <ChevronUp className="w-4 h-4 text-burgundy" /> : <ChevronDown className="w-4 h-4 text-slate-blue/40" />}
                   </td>
                   <td className="px-3 py-2.5">
                     <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium text-white" style={{ backgroundColor: getTechRouteColor(company.techRoute) }}>
@@ -330,9 +335,6 @@ function CompanyTable({ companies, expandedId, onToggle, compareIds, onToggleCom
                         />
                       </label>
                     )}
-                  </td>
-                  <td className="px-3 py-2.5">
-                    {expandedId === company.id ? <ChevronUp className="w-4 h-4 text-burgundy" /> : <ChevronDown className="w-4 h-4 text-slate-blue/40" />}
                   </td>
                 </tr>
                 {expandedId === company.id && (

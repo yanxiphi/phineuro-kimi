@@ -203,10 +203,10 @@ function findRelatedCompanies(company: typeof companiesData[0]): RelatedCompany[
 
 function RelationBadge({ type }: { type: string }) {
   const configs: Record<string, { color: string; icon: React.ElementType }> = {
-    competitor: { color: '#B01C2E', icon: Target },
-    investor: { color: '#D35400', icon: Handshake },
-    lab: { color: '#2980B9', icon: FlaskConical },
-    peer: { color: '#8E44AD', icon: Network },
+    competitor: { color: '#722F37', icon: Target },
+    investor: { color: '#D4AF37', icon: Handshake },
+    lab: { color: '#4A5568', icon: FlaskConical },
+    peer: { color: '#9B2C2C', icon: Network },
   };
   const config = configs[type] || configs.competitor;
   const Icon = config.icon;
@@ -293,7 +293,7 @@ export default function CompanyDetailPage() {
   if (mainTech) tags.push({ label: mainTech, color: techColor });
   if (company.chainPosition) tags.push({ label: company.chainPosition.split('-')[0], color: getChainLevelColor(getChainLevel(company.chainPosition)) });
   if (company.clinicalStage) tags.push({ label: company.clinicalStage, color: getClinicalStageColor(company.clinicalStage) });
-  if (company.fundingStage) tags.push({ label: company.fundingStage, color: '#D35400' });
+  if (company.fundingStage) tags.push({ label: company.fundingStage, color: '#D4AF37' });
   if (company.diseaseAreas?.[0]) tags.push({ label: company.diseaseAreas[0], color: getDiseaseColor(company.diseaseAreas[0]) });
 
   return (
@@ -391,6 +391,11 @@ export default function CompanyDetailPage() {
           </div>
         )}
 
+        {/* 企业时间线 */}
+        {!isGuest && displayedIntel.length > 0 && (
+          <CompanyTimeline founded={company.founded} intelFeeds={displayedIntel} />
+        )}
+
         {/* 访客权限控制：详细信息 */}
         {isGuest ? (
           <div className="relative bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-6 overflow-hidden">
@@ -459,9 +464,9 @@ export default function CompanyDetailPage() {
           {(company.diseaseAreas?.length || company.diseaseIndications?.length) && (
             <InfoCard icon={Stethoscope} title="疾病领域" intelItems={clinicalIntel}>
               <ChipRow label="疾病领域" values={company.diseaseAreas} getColor={getDiseaseColor} />
-              <ChipRow label="适应症" values={company.diseaseIndications} getColor={() => '#27AE60'} />
+              <ChipRow label="适应症" values={company.diseaseIndications} getColor={() => '#4A5568'} />
               <InfoRow label="临床阶段" value={company.clinicalStage} />
-              <ChipRow label="监管状态" values={company.regulatoryStatus} getColor={() => '#8E44AD'} />
+              <ChipRow label="监管状态" values={company.regulatoryStatus} getColor={() => '#722F37'} />
               <InfoRow label="产品形态" value={company.productForm} />
             </InfoCard>
           )}
@@ -469,8 +474,8 @@ export default function CompanyDetailPage() {
           {/* 商业模式与交叉创新 */}
           {(company.businessModel?.length || company.crossInnovation?.length) && (
             <InfoCard icon={Lightbulb} title="商业模式与创新">
-              <ChipRow label="商业模式" values={company.businessModel} getColor={() => '#2980B9'} />
-              <ChipRow label="交叉创新" values={company.crossInnovation} getColor={() => '#C0392B'} />
+              <ChipRow label="商业模式" values={company.businessModel} getColor={() => '#4A5568'} />
+              <ChipRow label="交叉创新" values={company.crossInnovation} getColor={() => '#722F37'} />
             </InfoCard>
           )}
         </div>
@@ -550,11 +555,6 @@ export default function CompanyDetailPage() {
             );
           })()}
         </div>
-
-        {/* 企业时间线 */}
-        {!isGuest && displayedIntel.length > 0 && (
-          <CompanyTimeline founded={company.founded} intelFeeds={displayedIntel} />
-        )}
 
         {/* Data Source */}
         {company.dataSource && (
