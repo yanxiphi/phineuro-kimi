@@ -89,6 +89,7 @@
 ### 修复执行
 - ✅ 问题1：已创建 WORKLOG.md 并更新记录
 - ✅ 问题2：News.tsx 已删除下方重复标签过滤器
+- ✅ **构建修复**：News.tsx 第201行 JSX 注释 `{/* Content -->` 缺少闭合符，导致 TS1381/TS1005/TS1109 语法错误，已修正为 `{/* Content */}`
 - ✅ 问题5：FounderProfilePage.tsx 错误文案改为"创始人信息搭建中"
 - ✅ 问题6：CompanyDetailPage.tsx 时间线已移到描述条下方
 - ✅ 问题7：CompanyDetailPage.tsx 硬编码颜色已统一为主题色系（#722F37 / #4A5568 / #D4AF37）
