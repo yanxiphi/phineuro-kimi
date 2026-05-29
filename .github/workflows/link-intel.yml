@@ -12,7 +12,7 @@ jobs:
       - name: Trigger Intel-Company Link API
         run: |
           curl -X POST \
-            "https://datasets.phineuro.life/api/cron/link-intel-to-companies" \
+            "https://phineuro.life/api/cron/link-intel-to-companies" \
             -H "Authorization: Bearer ${{ secrets.News_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n" \

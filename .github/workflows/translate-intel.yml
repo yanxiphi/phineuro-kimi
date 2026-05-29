@@ -13,7 +13,7 @@ jobs:
       - name: Trigger Intel Translation API
         run: |
           curl -X POST \
-            "https://datasets.phineuro.life/api/cron/translate-intel" \
+            "https://phineuro.life/api/cron/translate-intel" \
             -H "Authorization: Bearer ${{ secrets.News_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n" \
