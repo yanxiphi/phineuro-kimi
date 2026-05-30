@@ -17,6 +17,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.News_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n" \
-            -s
+            --retry 3 --retry-delay 5 --connect-timeout 15 --max-time 60 \
+            -v || echo "Request failed with exit code $?"
       - name: Log completion
         run: echo "Intel translation triggered at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
